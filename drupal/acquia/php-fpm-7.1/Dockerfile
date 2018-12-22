@@ -34,6 +34,7 @@ ENV BUILDDEPS autoconf \
         libsqlite3-dev \
         libssh2-1-dev \
         libssl-dev \
+        libsslcommon2-dev \
         libtidy-dev \
         libxml2-dev \
         libxpm-dev \
@@ -67,10 +68,14 @@ RUN apt-get update && apt-get install -y \
         cd /usr/src/php-*; \
         # Workaround for library issue on Ubuntu 16.04
         ln -s /usr/lib/libc-client.a /usr/lib/x86_64-linux-gnu/libc-client.a; \
-        ./configure ${CONFIGURE_OPTIONS}; \
+        # Build CLI
+        ./configure ${CLI_CONFIGURE_OPTIONS}; \
         make -j "$(nproc)"; \
         make install; \
-        make clean; \
+        # Build FPM
+        ./configure ${FPM_CONFIGURE_OPTIONS}; \
+        make -j "$(nproc)"; \
+        make install; \
         \
         # Copy the etc configuration into place
         rm -rf "${ETC}"; \
@@ -104,3 +109,11 @@ RUN apt-get update && apt-get install -y \
         # Validate that loaded extensions and config match
         if [ "$(php -m | grep -E '^[a-zA-Z0-9]+$' | tr '\n' ',')" != "${EXTENSIONS}" ]; then echo "PHP extensions do not match expected"; exit 1; fi; \
         if [ "$(php -r 'print json_encode(ini_get_all());')" != "${CONFIG}" ]; then echo "PHP config does not match expected"; exit 2; fi
+
+COPY currentconfig /usr/src
+RUN . /usr/src/currentconfig; \
+        # Configure php-fpm
+        sed -e's/listen = 127.0.0.1:9000/listen = 0.0.0.0:9000/' -e 's/group = nobody/group = nogroup/' "${ETC}"/php-fpm.d/www.conf.default > "${ETC}"/php-fpm.d/www.conf; \
+        cp "${ETC}"/php-fpm.conf.default "${ETC}"/php-fpm.conf
+
+CMD /usr/local/php7.1/sbin/php-fpm
