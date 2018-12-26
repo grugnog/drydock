@@ -19,7 +19,7 @@ sleep 10
 
 # TODO: Actually install Drupal here and also test dumping and autoloading a database.
 
-HTTPD=$(docker-compose --quiet httpd)
+HTTPD=$(docker-compose ps --quiet httpd)
 IP=$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "${HTTPD}")
 echo "Fetching page from ${IP} to check status"
 STATUS=$(curl --location --silent --output /dev/null --write-out "%{http_code}" "${IP}")
