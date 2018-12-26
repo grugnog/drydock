@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  httpd:
+    build: httpd
+    volumes:
+      - .:/var/www
+    depends_on:
+      - php-fpm
+  php-fpm:
+    build: php-fpm-7.1
+    volumes:
+      - .:/var/www
+    depends_on:
+      - mysql
+  mysql:
+    build: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=drupal
+      - MYSQL_PASSWORD=drupal
+      - MYSQL_DATABASE=drupal
