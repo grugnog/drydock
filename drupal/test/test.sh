@@ -4,7 +4,7 @@ set -e
 echo "Building containers"
 docker-compose --file docker-compose-7.1.yml build
 echo "Downloading Drupal core"
-docker run -v $(pwd):/app -u $(id -u ${USER}):$(id -g ${USER}) drush/drush dl drupal -y --drupal-project-rename=docroot
+docker run --volume "$(pwd)":/app --user $(id -u ${USER}):$(id -g ${USER}) drush/drush dl drupal -y --drupal-project-rename=docroot
 
 echo "Starting containers"
 docker-compose --file docker-compose-7.1.yml up --detach
