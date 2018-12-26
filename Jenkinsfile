@@ -1,12 +1,12 @@
 pipeline {
-    agent none
+    agent any
     stages {
         stage('Build and test Acquia images') {
-            agent any
             steps {
                 script {
-                    dir 'drupal/acquia'
-                    sh '../test/test.sh'
+                    dir('drupal/acquia') { 
+                        sh '../test/test.sh'
+                    }
                 }
             }
         }
