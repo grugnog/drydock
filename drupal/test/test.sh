@@ -8,6 +8,7 @@ docker run --volume "$(pwd)":/app --user $(id -u ${USER}):$(id -g ${USER}) drush
 
 echo "Starting containers"
 docker-compose --file docker-compose-7.1.yml up -d
+sleep 10
 
 # TODO: Actually install Drupal here and also test dumping and autoloading a database.
 
