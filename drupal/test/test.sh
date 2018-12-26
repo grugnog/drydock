@@ -7,7 +7,7 @@ echo "Downloading Drupal core"
 docker run --volume "$(pwd)":/app --user $(id -u ${USER}):$(id -g ${USER}) drush/drush dl drupal -y --drupal-project-rename=docroot
 
 echo "Starting containers"
-docker-compose --file docker-compose-7.1.yml up --detach
+docker-compose --file docker-compose-7.1.yml up -d
 
 # TODO: Actually install Drupal here and also test dumping and autoloading a database.
 
