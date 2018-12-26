@@ -8,4 +8,4 @@ scp "$DIR"/getconfig.sh "$HOST":/tmp/
 ssh "$HOST" bash /tmp/getconfig.sh > currentconfig
 ssh "$HOST" rm /tmp/getconfig.sh
 source currentconfig
-rsync -avz "$HOST":"$ETC" .
+rsync -avzL "$HOST":"$ETC" .

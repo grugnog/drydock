@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -e
+
 echo "Building containers"
 docker-compose --file docker-compose-7.1.yml build
 echo "Downloading Drupal core"
