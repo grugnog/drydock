@@ -4,8 +4,6 @@ if [ -z "$HOST" ]; then
   exit 1
 fi
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-scp "$DIR"/getconfig.sh "$HOST":/tmp/
-ssh "$HOST" bash /tmp/getconfig.sh > currentconfig
-ssh "$HOST" rm /tmp/getconfig.sh
-source currentconfig
-rsync -avzL "$HOST":"$ETC" .
+scp "$DIR"/getconfig.php "${HOST}":/tmp/
+ssh "$HOST" php /tmp/getconfig.php acquia > currentconfig
+ssh "$HOST" rm /tmp/getconfig.php
