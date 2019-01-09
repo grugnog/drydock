@@ -1,0 +1,127 @@
+FROM fedora:22
+
+# NOTE: This is not a production build: for sandbox/CI use only
+
+# Build dependencies - removed after build is complete
+ENV BUILDDEPS aspell-devel \
+        bzip2-devel \
+        curl-devel \
+        db4-devel \
+        freetds-devel \
+        freetype-devel \
+        gmp-devel \
+        ImageMagick-devel \
+        krb5-devel \
+        libXpm-devel \
+        libc-client-devel \
+        libcurl-devel \
+        libjpeg-devel \
+        libmcrypt-devel \
+        libpng-devel \
+        libtidy-devel \
+        libxml2-devel \
+        libxslt-devel \
+        mhash-devel \
+        mysql-devel \
+        ncurses-devel \
+        net-snmp-devel \
+        openldap-devel \
+        openssl-devel \
+        pcre-devel \
+        postgresql-devel \
+        readline-devel \
+        recode-devel \
+        sqlite-devel \
+        t1lib-devel \
+        unixODBC-devel \
+        zlib-devel
+
+# Items excluded from config comparison (known deltas due to IDs, extension defaults etc).
+ENV CONFIG_WHITELIST ^apm\.|^extension_dir|^sendmail_path|auto_prepend_file
+
+SHELL ["/bin/bash", "-c"]
+ENV PATH=$PATH:/opt/php7/bin
+COPY currentconfig /usr/src
+
+RUN . /usr/src/currentconfig; \
+        touch /var/lib/rpm/* \
+        && dnf -y upgrade --setopt=deltarpm=false \
+        && dnf -y group install "C Development Tools and Libraries" \
+        && dnf -y install \
+        ${BUILDDEPS} \
+        # Permanently installed dependencies
+        file \
+        wget \
+        xz; \
+        # Reqs for sqlsrv extension.
+        curl https://packages.microsoft.com/config/rhel/7/prod.repo > /etc/yum.repos.d/mssql-release.repo; \
+        ACCEPT_EULA=Y dnf install -y msodbcsql; \
+        \
+        # Download and build php
+        cd /usr/src; \
+        wget -O php.tar.xz "http://us1.php.net/get/php-${VERSION}.tar.xz/from/this/mirror"; \
+        tar xf php.tar.xz; \
+        cd /usr/src/php-*; \
+        # Build CLI and FPM (single build step, CLI and FPM use identical configure options)
+        ./configure ${CLI_CONFIGURE_OPTIONS}; \
+        make -j "$(nproc)"; \
+        make install; \
+        \
+        # Copy the etc configuration into place - CLI and FPM use identical configs.
+        echo "${CLI_INI}" > "/opt/php7/etc/php.ini"; \
+        # Workaround for APM PHP extension.
+        ln -s /usr/lib64/mysql/libmysqlclient* /usr/lib/; \
+        # Install PHP extensions - we use the versions from EXTENSIONS_VERSIONS since Pantheon doesn't list the pecl packages.
+        pear config-set php_ini /opt/php7/etc/php.ini; \
+        yes '' | pecl install --force $(echo "${EXTENSIONS_VERSIONS}" | grep -Eio '(apcu|apm|imagick|oauth|pdo_sqlsrv|redis|sqlsrv)-[0-9]\.[0-9]\.[0-9]'); \
+        \
+        # Clean up
+        rm -rf /usr/src/*; \
+        dnf -y group remove "C Development Tools and Libraries"; \
+        dnf clean all; \
+        \
+        # Validate that distro, loaded extensions and config match
+        diff -uw /etc/redhat-release <(echo "${DISTRO}"); if [ $? != 0 ]; then echo "Distro does not match expected"; exit 1; fi; \
+        diff -uw <(php -r '$e = get_loaded_extensions(); sort($e); print(implode(PHP_EOL, $e));') <(echo "${EXTENSIONS}"); if [ $? != 0 ]; then echo "PHP extensions do not match expected"; exit 2; fi; \
+        diff -uw \
+        <(php -r 'foreach (ini_get_all() as $k => $v) { print "$k: $v['global_value']\n"; }' | grep -Ev "($CONFIG_WHITELIST)") \
+        <(echo "${CONFIG}" | grep -Ev "($CONFIG_WHITELIST)"); \
+        if [ $? != 0 ]; then echo "PHP config does not match expected"; exit 3; fi
+
+RUN cd "/opt/php7/etc"; \
+        # Configure php-fpm for Docker: the below is sourced from https://github.com/docker-library/php/blob/master/7.1/stretch/fpm/Dockerfile#L198
+        if [ -d php-fpm.d ]; then \
+        # for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
+        sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
+        cp php-fpm.d/www.conf.default php-fpm.d/www.conf; \
+        else \
+        # PHP 5.x doesn't use "include=" by default, so we'll create our own simple config that mimics PHP 7+ for consistency
+        mkdir php-fpm.d; \
+        cp php-fpm.conf.default php-fpm.d/www.conf; \
+        { \
+        echo '[global]'; \
+        echo 'include=etc/php-fpm.d/*.conf'; \
+        } | tee php-fpm.conf; \
+        fi \
+        && { \
+        echo '[global]'; \
+        echo 'error_log = /proc/self/fd/2'; \
+        echo; \
+        echo '[www]'; \
+        echo '; if we send this to /proc/self/fd/1, it never appears'; \
+        echo 'access.log = /proc/self/fd/2'; \
+        echo; \
+        echo 'clear_env = no'; \
+        echo; \
+        echo '; Ensure worker stdout and stderr are sent to the main error log.'; \
+        echo 'catch_workers_output = yes'; \
+        } | tee php-fpm.d/docker.conf \
+        && { \
+        echo '[global]'; \
+        echo 'daemonize = no'; \
+        echo; \
+        echo '[www]'; \
+        echo 'listen = 9000'; \
+        } | tee php-fpm.d/zz-docker.conf
+
+CMD /opt/php7/sbin/php-fpm
