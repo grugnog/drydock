@@ -46,21 +46,22 @@ ENV BUILDDEPS autoconf \
         re2c \
         zlib1g-dev
 
+SHELL ["/bin/bash", "-c"]
 ENV PATH=$PATH:/usr/local/php7.1/bin
 COPY currentconfig /usr/src
-COPY etc /usr/src/etc
 
-RUN apt-get update && apt-get install -y \
+RUN . /usr/src/currentconfig; \
+        apt-get update && apt-get install -y \
         ${BUILDDEPS} \
         # Permanently installed dependencies
         ca-certificates \
         curl \
         file \
+        lsb-release \
         wget \
         xz-utils \
         --no-install-recommends && rm -r /var/lib/apt/lists/*; \
         \
-        . /usr/src/currentconfig; \
         # Download and build php
         cd /usr/src; \
         wget -O php.tar.xz "http://us1.php.net/get/php-${VERSION}.tar.xz/from/this/mirror"; \
@@ -77,9 +78,10 @@ RUN apt-get update && apt-get install -y \
         make -j "$(nproc)"; \
         make install; \
         \
-        # Copy the etc configuration into place
-        rm -rf "${ETC}"; \
-        mv /usr/src/etc "${ETC}"; \
+        # Copy the etc configuration into place, replacing all existing config.
+        mkdir -p "/usr/local/php7.1/etc/conf.d/" "/usr/local/php7.1/etc/cli/conf.d/" "/usr/local/php7.1/etc/fpm/conf.d/"; \
+        echo "${CLI_INI}" > "${CLI_INI_FILE}"; \
+        echo "${FPM_INI}" > "${FPM_INI_FILE}"; \
         \
         # Install PHP extensions
         pecl channel-update pecl.php.net; \
@@ -102,18 +104,15 @@ RUN apt-get update && apt-get install -y \
         mv /usr/local/php7.1/lib/php/extensions/no-debug-non-zts-20160303/* /usr/local/php7.1/lib/php/extensions; \
         \
         # Clean up
-        cd /usr/src; \
         rm -rf /usr/src/*; \
         apt-get purge -y ${BUILDDEPS}; \
         \
-        # Validate that loaded extensions and config match
-        if [ "$(php -m | grep -E '^[a-zA-Z0-9]+$' | tr '\n' ',')" != "${EXTENSIONS}" ]; then echo "PHP extensions do not match expected"; exit 1; fi; \
-        if [ "$(php -r 'print json_encode(ini_get_all());')" != "${CONFIG}" ]; then echo "PHP config does not match expected"; exit 2; fi
+        # Validate that distro, loaded extensions and config match
+        diff -uw <(lsb_release -ir) <(echo "${DISTRO}"); if [ $? != 0 ]; then echo "Distro does not match expected"; exit 1; fi; \
+        diff -uw <(php -r '$e = get_loaded_extensions(); sort($e); print(implode(PHP_EOL, $e));') <(echo "${EXTENSIONS}"); if [ $? != 0 ]; then echo "PHP extensions do not match expected"; exit 2; fi; \
+        diff -uw <(php -r 'foreach (ini_get_all() as $k => $v) { print "$k: $v['global_value']\n"; }') <(echo "${CONFIG}"); if [ $? != 0 ]; then echo "PHP config does not match expected"; exit 3; fi
 
-COPY currentconfig /usr/src
-
-RUN . /usr/src/currentconfig; \
-        cd "${ETC}"; \
+RUN cd "/usr/local/php7.1/etc"; \
         sed -i'' -e 's/^group = nobody/group = nogroup/' php-fpm.d/www.conf.default; \
         # Configure php-fpm for Docker: the below is sourced from https://github.com/docker-library/php/blob/master/7.1/stretch/fpm/Dockerfile#L198
         if [ -d php-fpm.d ]; then \
@@ -149,6 +148,5 @@ RUN . /usr/src/currentconfig; \
         echo '[www]'; \
         echo 'listen = 9000'; \
         } | tee php-fpm.d/zz-docker.conf
-
 
 CMD /usr/local/php7.1/sbin/php-fpm
