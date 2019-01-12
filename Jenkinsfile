@@ -5,7 +5,12 @@ pipeline {
             steps {
                 script {
                     dir('drupal/acquia') { 
-                        sh '../test/test.sh'
+                        withEnv(['VERSION=7.1']) {
+                            sh '../test/test.sh'
+                        }
+                        withEnv(['VERSION=7.2']) {
+                            sh '../test/test.sh'
+                        }
                     }
                 }
             }

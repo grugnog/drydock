@@ -8,7 +8,10 @@ services:
     depends_on:
       - php
   php:
-    build: php
+    build:
+      context: php
+      args:
+        version: "${VERSION}"
     volumes:
       - .:/var/www
     depends_on:
