@@ -1,9 +1,9 @@
 export DISTRO='Distributor ID:	Ubuntu
 Release:	16.04'
-export VERSION='7.1.22'
-export CLI_CONFIGURE_OPTIONS='--enable-cli --with-config-file-path=/usr/local/php7.1/etc/cli --with-config-file-scan-dir=/usr/local/php7.1/etc/cli/conf.d --prefix=/usr/local/php7.1 --enable-bcmath --with-gmp --with-bz2=/usr --enable-calendar --with-curl --enable-dba --with-db4 --enable-exif --with-gd --with-jpeg-dir=/usr/lib --with-png-dir=/usr/lib --with-freetype-dir=/usr --enable-ftp --with-gettext --with-imap --with-kerberos --with-imap-ssl --enable-inline-optimization --with-ldap --with-ldap-sasl --with-openssl=/usr --enable-mbstring --enable-mbregex --with-mcrypt --with-mhash --with-mssql --with-mysql --with-mysql-sock=/var/run/mysqld/mysqld.sock --with-mysqli=/usr/bin/mysql_config --enable-pcntl --with-pcre-regex --with-pgsql --with-pdo-mysql --with-pdo-pgsql --with-pdo-dblib --with-pspell=/usr --with-readline --enable-shmop --enable-soap --enable-sockets --enable-sysvsem --enable-sysvshm --enable-sysvmsg --with-tidy --enable-wddx --enable-xml --with-xmlrpc --with-xsl --with-xpm-dir=/usr --enable-zip --with-zlib --with-libdir=/lib/x86_64-linux-gnu'
-export FPM_CONFIGURE_OPTIONS='--enable-fpm --disable-cli --with-config-file-path=/usr/local/php7.1/etc/fpm --with-config-file-scan-dir=/usr/local/php7.1/etc/fpm/conf.d --prefix=/usr/local/php7.1 --enable-bcmath --with-gmp --with-bz2=/usr --enable-calendar --with-curl --enable-dba --with-db4 --enable-exif --with-gd --with-jpeg-dir=/usr/lib --with-png-dir=/usr/lib --with-freetype-dir=/usr --enable-ftp --with-gettext --with-imap --with-kerberos --with-imap-ssl --enable-inline-optimization --with-ldap --with-ldap-sasl --with-openssl=/usr --enable-mbstring --enable-mbregex --with-mcrypt --with-mhash --with-mssql --with-mysql --with-mysql-sock=/var/run/mysqld/mysqld.sock --with-mysqli=/usr/bin/mysql_config --enable-pcntl --with-pcre-regex --with-pgsql --with-pdo-mysql --with-pdo-pgsql --with-pdo-dblib --with-pspell=/usr --with-readline --enable-shmop --enable-soap --enable-sockets --enable-sysvsem --enable-sysvshm --enable-sysvmsg --with-tidy --enable-wddx --enable-xml --with-xmlrpc --with-xsl --with-xpm-dir=/usr --enable-zip --with-zlib --with-libdir=/lib/x86_64-linux-gnu'
-export PECL='apcu-5.1.12 gnupg-1.4.0 igbinary-2.0.7 imagick-3.4.3 memcached-3.0.4 oauth-2.0.2 pecl_http-3.2.0 propro-2.1.0 raphf-2.0.0 ssh2-1.1.2 yaml-2.0.2'
+export VERSION='7.2.13'
+export CLI_CONFIGURE_OPTIONS='--enable-cli --with-config-file-path=/usr/local/php/etc/cli --with-config-file-scan-dir=/usr/local/php/etc/cli/conf.d --prefix=/usr/local/php --enable-bcmath --with-gmp --with-bz2=/usr --enable-calendar --with-curl --enable-dba --with-db4 --enable-exif --with-gd --with-jpeg-dir=/usr/lib --with-png-dir=/usr/lib --with-freetype-dir=/usr --enable-ftp --with-gettext --with-imap --with-kerberos --with-imap-ssl --enable-inline-optimization --with-ldap --with-ldap-sasl --with-openssl=/usr --enable-mbstring --enable-mbregex --with-mcrypt --with-mhash --with-mssql --with-mysql --with-mysql-sock=/var/run/mysqld/mysqld.sock --with-mysqli=/usr/bin/mysql_config --enable-pcntl --with-pcre-regex --with-pgsql --with-pdo-mysql --with-pdo-pgsql --with-pdo-dblib --with-pspell=/usr --with-readline --enable-shmop --enable-soap --enable-sockets --enable-sysvsem --enable-sysvshm --enable-sysvmsg --with-tidy --enable-wddx --enable-xml --with-xmlrpc --with-xsl --with-xpm-dir=/usr --enable-zip --with-zlib --with-libdir=/lib/x86_64-linux-gnu'
+export FPM_CONFIGURE_OPTIONS='--enable-fpm --disable-cli --with-config-file-path=/usr/local/php/etc/fpm --with-config-file-scan-dir=/usr/local/php/etc/fpm/conf.d --prefix=/usr/local/php --enable-bcmath --with-gmp --with-bz2=/usr --enable-calendar --with-curl --enable-dba --with-db4 --enable-exif --with-gd --with-jpeg-dir=/usr/lib --with-png-dir=/usr/lib --with-freetype-dir=/usr --enable-ftp --with-gettext --with-imap --with-kerberos --with-imap-ssl --enable-inline-optimization --with-ldap --with-ldap-sasl --with-openssl=/usr --enable-mbstring --enable-mbregex --with-mcrypt --with-mhash --with-mssql --with-mysql --with-mysql-sock=/var/run/mysqld/mysqld.sock --with-mysqli=/usr/bin/mysql_config --enable-pcntl --with-pcre-regex --with-pgsql --with-pdo-mysql --with-pdo-pgsql --with-pdo-dblib --with-pspell=/usr --with-readline --enable-shmop --enable-soap --enable-sockets --enable-sysvsem --enable-sysvshm --enable-sysvmsg --with-tidy --enable-wddx --enable-xml --with-xmlrpc --with-xsl --with-xpm-dir=/usr --enable-zip --with-zlib --with-libdir=/lib/x86_64-linux-gnu'
+export PECL='apcu-5.1.15 gnupg-1.4.0 igbinary-2.0.8 imagick-3.4.3 memcached-3.0.4 oauth-2.0.3 pecl_http-3.2.0 propro-2.1.0 raphf-2.0.0 ssh2-1.1.2 yaml-2.0.4'
 export EXTENSIONS='Core
 OAuth
 PDO
@@ -37,7 +37,6 @@ json
 ldap
 libxml
 mbstring
-mcrypt
 memcached
 mysqli
 mysqlnd
@@ -76,79 +75,78 @@ xsl
 yaml
 zip
 zlib'
-export EXTENSIONS_VERSIONS='Core-7.1.22
-OAuth-2.0.2
-PDO-7.1.22
+export EXTENSIONS_VERSIONS='Core-7.2.13
+OAuth-2.0.3-dev
+PDO-7.2.13
 Phar-2.0.2
-Reflection-7.1.22
-SPL-7.1.22
-SimpleXML-7.1.22
-bcmath-7.1.22
-bz2-7.1.22
-calendar-7.1.22
-ctype-7.1.22
-curl-7.1.22
-date-7.1.22
-dba-7.1.22
+Reflection-7.2.13
+SPL-7.2.13
+SimpleXML-7.2.13
+bcmath-7.2.13
+bz2-7.2.13
+calendar-7.2.13
+ctype-7.2.13
+curl-7.2.13
+date-7.2.13
+dba-7.2.13
 dom-20031129
-exif-7.1.22
+exif-7.2.13
 fileinfo-1.0.5
-filter-7.1.22
-ftp-7.1.22
-gd-7.1.22
-gettext-7.1.22
-gmp-7.1.22
+filter-7.2.13
+ftp-7.2.13
+gd-7.2.13
+gettext-7.2.13
+gmp-7.2.13
 gnupg-1.4.0
 hash-1.0
 http-3.2.0
-iconv-7.1.22
-igbinary-2.0.7
+iconv-7.2.13
+igbinary-2.0.8
 imagick-3.4.3
-imap-7.1.22
-json-1.5.0
-ldap-7.1.22
-libxml-7.1.22
-mbstring-7.1.22
-mcrypt-7.1.22
+imap-7.2.13
+json-1.6.0
+ldap-7.2.13
+libxml-7.2.13
+mbstring-7.2.13
 memcached-3.0.4
-mysqli-7.1.22
+mysqli-7.2.13
 mysqlnd-mysqlnd 5.0.12-dev - 20150407 - $Id: 38fea24f2847fa7519001be390c98ae0acafe387 $
-openssl-7.1.22
-pcntl-7.1.22
-pcre-7.1.22
-pdo_dblib-7.1.22
-pdo_mysql-7.1.22
-pdo_pgsql-7.1.22
-pdo_sqlite-7.1.22
-pgsql-7.1.22
-posix-7.1.22
+openssl-7.2.13
+pcntl-7.2.13
+pcre-7.2.13
+pdo_dblib-7.2.13
+pdo_mysql-7.2.13
+pdo_pgsql-7.2.13
+pdo_sqlite-7.2.13
+pgsql-7.2.13
+posix-7.2.13
 propro-2.1.0
-pspell-7.1.22
+pspell-7.2.13
 raphf-2.0.0
-readline-7.1.22
-session-7.1.22
-shmop-7.1.22
-soap-7.1.22
-sockets-7.1.22
-sqlite3-7.1.22
+readline-7.2.13
+session-7.2.13
+shmop-7.2.13
+soap-7.2.13
+sockets-7.2.13
+sqlite3-7.2.13
 ssh2-1.1.2
-standard-7.1.22
-sysvmsg-7.1.22
-sysvsem-7.1.22
-sysvshm-7.1.22
+standard-7.2.13
+sysvmsg-7.2.13
+sysvsem-7.2.13
+sysvshm-7.2.13
 tideways-4.1.5
-tidy-7.1.22
-tokenizer-7.1.22
-wddx-7.1.22
-xml-7.1.22
-xmlreader-7.1.22
-xmlrpc-7.1.22
-xmlwriter-7.1.22
-xsl-7.1.22
-yaml-2.0.2
-zip-1.13.5
-zlib-7.1.22'
-export CLI_INI_FILE='/usr/local/php7.1/etc/cli/php.ini'
+tidy-7.2.13
+tokenizer-7.2.13
+wddx-7.2.13
+xml-7.2.13
+xmlreader-7.2.13
+xmlrpc-7.2.13
+xmlwriter-7.2.13
+xsl-7.2.13
+yaml-2.0.4
+zip-1.15.4
+zlib-7.2.13'
+export CLI_INI_FILE='/usr/local/php/etc/cli/php.ini'
 export CLI_INI='[PHP]
 
 ;;;;;;;;;;;;;;;;;;;
@@ -673,7 +671,7 @@ doc_root =
 user_dir =
 
 ; Directory in which the loadable extensions (modules) reside.
-extension_dir = "/usr/local/php7.1/lib/php/extensions"
+extension_dir = "/usr/local/php/lib/php/extensions"
 
 ; Whether or not to enable the dl() function.  The dl() function does NOT work
 ; properly in multithreaded servers, such as IIS or Zeus, and is automatically
@@ -1454,7 +1452,7 @@ xdebug.profiler_enable=Off
 
 extension=yaml.so
 '
-export FPM_INI_FILE='/usr/local/php7.1/etc/fpm/php.ini'
+export FPM_INI_FILE='/usr/local/php/etc/fpm/php.ini'
 export FPM_INI='[PHP]
 
 ;;;;;;;;;;;;;;;;;;;
@@ -1751,7 +1749,7 @@ implicit_flush = Off
 ; callback-function.
 unserialize_callback_func =
 
-; When floats & doubles are serialized store serialize_precision significant
+; When floats & doubles are serialized, store serialize_precision significant
 ; digits after the floating point. The default value ensures that when floats
 ; are decoded with unserialize, the data will remain the same.
 ; The value is also used for json_encode when encoding double values.
@@ -1982,11 +1980,12 @@ report_memleaks = On
 ; Store the last error/warning message in $php_errormsg (boolean). Setting this value
 ; to On can assist in debugging and is appropriate for development servers. It should
 ; however be disabled on production servers.
+; This directive is DEPRECATED.
 ; Default Value: Off
-; Development Value: On
+; Development Value: Off
 ; Production Value: Off
 ; http://php.net/track-errors
-track_errors = Off
+;track_errors = Off
 
 ; Turn off normal error reporting and emit XML-RPC error XML
 ; http://php.net/xmlrpc-errors
@@ -2323,64 +2322,63 @@ default_socket_timeout = 60
 ; If you wish to have an extension loaded automatically, use the following
 ; syntax:
 ;
-;   extension=modulename.extension
+;   extension=modulename
 ;
-; For example, on Windows:
+; For example:
 ;
-;   extension=msql.dll
+;   extension=mysqli
 ;
-; ... or under UNIX:
+; When the extension library to load is not located in the default extension
+; directory, You may specify an absolute path to the library file:
 ;
-;   extension=msql.so
+;   extension=/path/to/extension/mysqli.so
 ;
-; ... or with a path:
+; Note : The syntax used in previous PHP versions ('\''extension=<ext>.so'\'' and
+; '\''extension='\''php_<ext>.dll'\'') is supported for legacy reasons and may be
+; deprecated in a future PHP major version. So, when it is possible, please
+; move to the new ('\''extension=<ext>) syntax.
 ;
-;   extension=/path/to/extension/msql.so
+; Notes for Windows environments :
 ;
-; If you only provide the name of the extension, PHP will look for it in its
-; default extension directory.
+; - Many DLL files are located in the extensions/ (PHP 4) or ext/ (PHP 5+)
+;   extension folders as well as the separate PECL DLL download (PHP 5+).
+;   Be sure to appropriately set the extension_dir directive.
 ;
-; Windows Extensions
-; Note that many DLL files are located in the extensions/ (PHP 4) ext/ (PHP 5+)
-; extension folders as well as the separate PECL DLL download (PHP 5+).
-; Be sure to appropriately set the extension_dir directive.
-;
-;extension=php_bz2.dll
-;extension=php_curl.dll
-;extension=php_fileinfo.dll
-;extension=php_ftp.dll
-;extension=php_gd2.dll
-;extension=php_gettext.dll
-;extension=php_gmp.dll
-;extension=php_intl.dll
-;extension=php_imap.dll
-;extension=php_interbase.dll
-;extension=php_ldap.dll
-;extension=php_mbstring.dll
-;extension=php_exif.dll      ; Must be after mbstring as it depends on it
-;extension=php_mysqli.dll
-;extension=php_oci8_12c.dll  ; Use with Oracle Database 12c Instant Client
-;extension=php_odbc.dll
-;extension=php_openssl.dll
-;extension=php_pdo_firebird.dll
-;extension=php_pdo_mysql.dll
-;extension=php_pdo_oci.dll
-;extension=php_pdo_odbc.dll
-;extension=php_pdo_pgsql.dll
-;extension=php_pdo_sqlite.dll
-;extension=php_pgsql.dll
-;extension=php_shmop.dll
+;extension=bz2
+;extension=curl
+;extension=fileinfo
+;extension=gd2
+;extension=gettext
+;extension=gmp
+;extension=intl
+;extension=imap
+;extension=interbase
+;extension=ldap
+;extension=mbstring
+;extension=exif      ; Must be after mbstring as it depends on it
+;extension=mysqli
+;extension=oci8_12c  ; Use with Oracle Database 12c Instant Client
+;extension=odbc
+;extension=openssl
+;extension=pdo_firebird
+;extension=pdo_mysql
+;extension=pdo_oci
+;extension=pdo_odbc
+;extension=pdo_pgsql
+;extension=pdo_sqlite
+;extension=pgsql
+;extension=shmop
 
 ; The MIBS data available in the PHP distribution must be installed.
 ; See http://www.php.net/manual/en/snmp.installation.php
-;extension=php_snmp.dll
+;extension=snmp
 
-;extension=php_soap.dll
-;extension=php_sockets.dll
-;extension=php_sqlite3.dll
-;extension=php_tidy.dll
-;extension=php_xmlrpc.dll
-;extension=php_xsl.dll
+;extension=soap
+;extension=sockets
+;extension=sqlite3
+;extension=tidy
+;extension=xmlrpc
+;extension=xsl
 
 ;;;;;;;;;;;;;;;;;;;
 ; Module Settings ;
@@ -2513,10 +2511,6 @@ mail.add_x_header = Off
 ;mail.log =
 ; Log mail to syslog (Event Log on Windows).
 ;mail.log = syslog
-
-[SQL]
-; http://php.net/sql.safe-mode
-sql.safe_mode = Off
 
 [ODBC]
 ; http://php.net/odbc.default-db
@@ -3220,17 +3214,6 @@ soap.wsdl_cache_limit = 5
 ; Sets the maximum number of open links or -1 for unlimited.
 ldap.max_links = -1
 
-[mcrypt]
-; For more information about mcrypt settings see http://php.net/mcrypt-module-open
-
-; Directory where to load mcrypt algorithms
-; Default: Compiled in into libmcrypt (usually /usr/local/lib/libmcrypt)
-;mcrypt.algorithms_dir=
-
-; Directory where to load mcrypt modes
-; Default: Compiled in into libmcrypt (usually /usr/local/lib/libmcrypt)
-;mcrypt.modes_dir=
-
 [dba]
 ;dba.default_handler=
 
@@ -3275,10 +3258,6 @@ ldap.max_links = -1
 ; If disabled, all PHPDoc comments are dropped from the code to reduce the
 ; size of the optimized code.
 ;opcache.save_comments=1
-
-; If enabled, a fast shutdown sequence is used for the accelerated code
-; Depending on the used Memory Manager this may cause some incompatibilities.
-;opcache.fast_shutdown=0
 
 ; Allow file existence override (file_exists, etc.) performance feature.
 ;opcache.enable_file_override=0
@@ -3393,7 +3372,7 @@ ldap.max_links = -1
 ; tab-width: 4
 ; End:
 date.timezone = "UTC"
-extension_dir = /usr/local/php7.1/lib/php/extensions
+extension_dir = /usr/local/php/lib/php/extensions
 
 extension=gnupg.so
 
@@ -3492,7 +3471,7 @@ exif.decode_unicode_motorola: UCS-2BE
 exif.encode_jis: 
 exif.encode_unicode: ISO-8859-15
 expose_php: 
-extension_dir: /usr/local/php7.1/lib/php/extensions
+extension_dir: /usr/local/php/lib/php/extensions
 file_uploads: 1
 filter.default: unsafe_raw
 filter.default_flags: 
@@ -3516,8 +3495,9 @@ ignore_user_abort: 0
 imagick.locale_fix: 0
 imagick.progress_monitor: 0
 imagick.skip_version_check: 0
+imap.enable_insecure_rsh: 0
 implicit_flush: 1
-include_path: .:/usr/local/php7.1/lib/php
+include_path: .:/usr/local/php/lib/php
 input_encoding: 
 internal_encoding: 
 ldap.max_links: -1
@@ -3541,8 +3521,6 @@ mbstring.internal_encoding:
 mbstring.language: neutral
 mbstring.strict_detection: 0
 mbstring.substitute_character: 
-mcrypt.algorithms_dir: 
-mcrypt.modes_dir: 
 memcached.compression_factor: 1.3
 memcached.compression_threshold: 2000
 memcached.compression_type: fastlz
@@ -3589,7 +3567,7 @@ mysqlnd.log_mask: 0
 mysqlnd.mempool_default_size: 16000
 mysqlnd.net_cmd_buffer_size: 4096
 mysqlnd.net_read_buffer_size: 32768
-mysqlnd.net_read_timeout: 31536000
+mysqlnd.net_read_timeout: 86400
 mysqlnd.sha256_server_public_key: 
 mysqlnd.trace_alloc: 
 open_basedir: 
@@ -3630,7 +3608,7 @@ session.cookie_domain:
 session.cookie_httponly: 
 session.cookie_lifetime: 0
 session.cookie_path: /
-session.cookie_secure: 
+session.cookie_secure: 0
 session.gc_divisor: 1000
 session.gc_maxlifetime: 1440
 session.gc_probability: 1
@@ -3662,7 +3640,6 @@ soap.wsdl_cache_dir: /tmp
 soap.wsdl_cache_enabled: 1
 soap.wsdl_cache_limit: 5
 soap.wsdl_cache_ttl: 86400
-sql.safe_mode: 
 sqlite3.extension_dir: 
 sys_temp_dir: 
 tideways.api_key: 
