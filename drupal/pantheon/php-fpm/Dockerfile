@@ -2,6 +2,15 @@ FROM fedora:22
 
 # NOTE: This is not a production build: for sandbox/CI use only
 
+# Pass the version of PHP to use as a build arg - must have corresponding config file
+ARG version=7.2
+
+# Items excluded from config comparison (known deltas due to IDs, extension defaults etc)
+ENV CONFIG_EXCLUDE ^apm\.|^extension_dir|^sendmail_path|auto_prepend_file|^ic24.sec.initial_cache_all
+
+# PECL packages - we need to list these explicitly as we can't identify these automatically
+ENV PECL_PACKAGES apcu|apm|imagick|oauth|pdo_sqlsrv|redis|sqlsrv
+
 # Build dependencies - removed after build is complete
 ENV BUILDDEPS aspell-devel \
         bzip2-devel \
@@ -36,14 +45,17 @@ ENV BUILDDEPS aspell-devel \
         unixODBC-devel \
         zlib-devel
 
-# Items excluded from config comparison (known deltas due to IDs, extension defaults etc).
-ENV CONFIG_WHITELIST ^apm\.|^extension_dir|^sendmail_path|auto_prepend_file
-
+# We use bash process substitution to simplify the validation diff commands
 SHELL ["/bin/bash", "-c"]
-ENV PATH=$PATH:/opt/php7/bin
-COPY currentconfig /usr/src
 
-RUN . /usr/src/currentconfig; \
+# Set the path to include the build PHP bin directory
+ENV PATH=$PATH:/opt/php/bin
+
+# Copy in the config file specified by the "version" build arg
+COPY "${version}"-config /usr/src/config
+
+# Install prerequisites, build PHP & extensions, validate the build then clean up
+RUN . /usr/src/config; \
         touch /var/lib/rpm/* \
         && dnf -y upgrade --setopt=deltarpm=false \
         && dnf -y group install "C Development Tools and Libraries" \
@@ -53,7 +65,7 @@ RUN . /usr/src/currentconfig; \
         file \
         wget \
         xz; \
-        # Reqs for sqlsrv extension.
+        # Reqs for sqlsrv extension
         curl https://packages.microsoft.com/config/rhel/7/prod.repo > /etc/yum.repos.d/mssql-release.repo; \
         ACCEPT_EULA=Y dnf install -y msodbcsql; \
         \
@@ -67,13 +79,24 @@ RUN . /usr/src/currentconfig; \
         make -j "$(nproc)"; \
         make install; \
         \
-        # Copy the etc configuration into place - CLI and FPM use identical configs.
-        echo "${CLI_INI}" > "/opt/php7/etc/php.ini"; \
-        # Workaround for APM PHP extension.
+        # Copy the etc configuration into place - CLI and FPM use identical configs
+        echo "${CLI_INI}" > "/opt/php/etc/php.ini"; \
+        # Workaround for APM PHP extension
         ln -s /usr/lib64/mysql/libmysqlclient* /usr/lib/; \
-        # Install PHP extensions - we use the versions from EXTENSIONS_VERSIONS since Pantheon doesn't list the pecl packages.
-        pear config-set php_ini /opt/php7/etc/php.ini; \
-        yes '' | pecl install --force $(echo "${EXTENSIONS_VERSIONS}" | grep -Eio '(apcu|apm|imagick|oauth|pdo_sqlsrv|redis|sqlsrv)-[0-9]\.[0-9]\.[0-9]'); \
+        # Install PHP extensions - we use the versions from EXTENSIONS_VERSIONS since Pantheon doesn't list the pecl packages
+        pear config-set php_ini /opt/php/etc/php.ini; \
+        yes '' | pecl install --force $(echo "${EXTENSIONS_VERSIONS}" | grep -Eio "(${PECL_PACKAGES})-[0-9]\.[0-9]\.[0-9]"); \
+        # Move the extensions from the extension API version directory to the /opt/php/lib directory to simplify configuration (PECL ext_dir does not work)
+        mv /opt/php/lib/[0-9]*/* /opt/php/lib; \
+        # Install ionCube if present
+        if [[ ${EXTENSIONS} == *"ionCube Loader"* ]]; then \
+        mkdir -p /opt/pantheon/ioncube/10.0.3/; \
+        curl -L http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz | tar xvz --directory /opt/pantheon/ioncube/10.0.3/ --strip-components=1; \
+        fi; \
+        # Ensure each extension is only listed once in php.ini
+        export EXT=$(grep -F '^extension=' /opt/php/etc/php.ini | tr -d '"' | sort -u); \
+        sed -i'' /opt/php/etc/php.ini -e 's/^extension=.*//g'; \
+        echo "${EXT}" >> /opt/php/etc/php.ini; \
         \
         # Clean up
         rm -rf /usr/src/*; \
@@ -84,12 +107,12 @@ RUN . /usr/src/currentconfig; \
         diff -uw /etc/redhat-release <(echo "${DISTRO}"); if [ $? != 0 ]; then echo "Distro does not match expected"; exit 1; fi; \
         diff -uw <(php -r '$e = get_loaded_extensions(); sort($e); print(implode(PHP_EOL, $e));') <(echo "${EXTENSIONS}"); if [ $? != 0 ]; then echo "PHP extensions do not match expected"; exit 2; fi; \
         diff -uw \
-        <(php -r 'foreach (ini_get_all() as $k => $v) { print "$k: $v['global_value']\n"; }' | grep -Ev "($CONFIG_WHITELIST)") \
-        <(echo "${CONFIG}" | grep -Ev "($CONFIG_WHITELIST)"); \
+        <(php -r 'foreach (ini_get_all() as $k => $v) { print "$k: $v['global_value']\n"; }' | grep -Ev "($CONFIG_EXCLUDE)") \
+        <(echo "${CONFIG}" | grep -Ev "($CONFIG_EXCLUDE)"); \
         if [ $? != 0 ]; then echo "PHP config does not match expected"; exit 3; fi
 
-RUN cd "/opt/php7/etc"; \
-        # Configure php-fpm for Docker: the below is sourced from https://github.com/docker-library/php/blob/master/7.1/stretch/fpm/Dockerfile#L198
+# Configure php-fpm for Docker: the below is sourced from https://github.com/docker-library/php/blob/master/7.1/stretch/fpm/Dockerfile#L198
+RUN cd "/opt/php/etc"; \
         if [ -d php-fpm.d ]; then \
         # for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
         sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
@@ -124,4 +147,4 @@ RUN cd "/opt/php7/etc"; \
         echo 'listen = 9000'; \
         } | tee php-fpm.d/zz-docker.conf
 
-CMD /opt/php7/sbin/php-fpm
+CMD /opt/php/sbin/php-fpm

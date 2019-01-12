@@ -1,7 +1,7 @@
 export DISTRO='Fedora release 22 (Twenty Two)'
-export VERSION='7.2.13'
-export CLI_CONFIGURE_OPTIONS='--host=x86_64-redhat-linux-gnu --prefix=/opt/php7 --with-libdir=lib64 --disable-debug --with-pic --disable-rpath --with-pear --with-bz2 --with-freetype-dir=/usr --with-png-dir=/usr --with-xpm-dir=/usr --enable-gd-native-ttf --with-t1lib=/usr --without-gdbm --with-gettext --with-gmp --with-iconv --with-jpeg-dir=/usr --with-openssl --with-pcre-regex=/usr --with-zlib --with-layout=GNU --enable-exif --enable-ftp --enable-sockets --with-kerberos --enable-shmop --enable-calendar --with-libxml-dir=/usr --enable-xml --with-mhash --enable-fpm --libdir=/opt/php7/lib --with-mysql=mysqlnd --disable-dba --with-unixODBC=/usr --without-pspell --with-curl=/usr --disable-posix --disable-sysvmsg --disable-sysvshm --disable-sysvsem --with-pdo-sqlite --with-pdo-mysql --with-mysqli=mysqlnd --with-pdo-pgsql --with-pgsql --with-imap --with-imap-ssl --with-gd --with-ldap --with-mcrypt --with-tidy --enable-wddx --enable-bcmath --enable-dom --enable-fileinfo --enable-json --enable-mbstring --enable-pdo --enable-phar --enable-soap --enable-xmlreader --enable-xmlwriter --with-xsl --enable-zip --enable-opcache --with-imagick --enable-apcu --enable-apc-bc --enable-redis --enable-oauth host_alias=x86_64-redhat-linux-gnu'
-export FPM_CONFIGURE_OPTIONS='--host=x86_64-redhat-linux-gnu --prefix=/opt/php7 --with-libdir=lib64 --disable-debug --with-pic --disable-rpath --with-pear --with-bz2 --with-freetype-dir=/usr --with-png-dir=/usr --with-xpm-dir=/usr --enable-gd-native-ttf --with-t1lib=/usr --without-gdbm --with-gettext --with-gmp --with-iconv --with-jpeg-dir=/usr --with-openssl --with-pcre-regex=/usr --with-zlib --with-layout=GNU --enable-exif --enable-ftp --enable-sockets --with-kerberos --enable-shmop --enable-calendar --with-libxml-dir=/usr --enable-xml --with-mhash --enable-fpm --libdir=/opt/php7/lib --with-mysql=mysqlnd --disable-dba --with-unixODBC=/usr --without-pspell --with-curl=/usr --disable-posix --disable-sysvmsg --disable-sysvshm --disable-sysvsem --with-pdo-sqlite --with-pdo-mysql --with-mysqli=mysqlnd --with-pdo-pgsql --with-pgsql --with-imap --with-imap-ssl --with-gd --with-ldap --with-mcrypt --with-tidy --enable-wddx --enable-bcmath --enable-dom --enable-fileinfo --enable-json --enable-mbstring --enable-pdo --enable-phar --enable-soap --enable-xmlreader --enable-xmlwriter --with-xsl --enable-zip --enable-opcache --with-imagick --enable-apcu --enable-apc-bc --enable-redis --enable-oauth host_alias=x86_64-redhat-linux-gnu'
+export VERSION='7.1.26'
+export CLI_CONFIGURE_OPTIONS='--host=x86_64-redhat-linux-gnu --prefix=/opt/php --with-libdir=lib64 --disable-debug --with-pic --disable-rpath --with-pear --with-bz2 --with-freetype-dir=/usr --with-png-dir=/usr --with-xpm-dir=/usr --enable-gd-native-ttf --with-t1lib=/usr --without-gdbm --with-gettext --with-gmp --with-iconv --with-jpeg-dir=/usr --with-openssl --with-pcre-regex=/usr --with-zlib --with-layout=GNU --enable-exif --enable-ftp --enable-sockets --with-kerberos --enable-shmop --enable-calendar --with-libxml-dir=/usr --enable-xml --with-mhash --enable-fpm --libdir=/opt/php/lib --with-mysql=mysqlnd --disable-dba --with-unixODBC=/usr --without-pspell --with-curl=/usr --disable-posix --disable-sysvmsg --disable-sysvshm --disable-sysvsem --with-pdo-sqlite --with-pdo-mysql --with-mysqli=mysqlnd --with-pdo-pgsql --with-pgsql --with-imap --with-imap-ssl --with-gd --with-ldap --with-mcrypt --with-tidy --enable-wddx --enable-bcmath --enable-dom --enable-fileinfo --enable-json --enable-mbstring --enable-pdo --enable-phar --enable-soap --enable-xmlreader --enable-xmlwriter --with-xsl --enable-zip --enable-opcache --with-imagick --enable-apcu --enable-apc-bc --enable-redis --enable-oauth --enable-sqlsrv=shared --with-pdo_sqlsrv=shared --with-odbcver=0x0380 host_alias=x86_64-redhat-linux-gnu'
+export FPM_CONFIGURE_OPTIONS='--host=x86_64-redhat-linux-gnu --prefix=/opt/php --with-libdir=lib64 --disable-debug --with-pic --disable-rpath --with-pear --with-bz2 --with-freetype-dir=/usr --with-png-dir=/usr --with-xpm-dir=/usr --enable-gd-native-ttf --with-t1lib=/usr --without-gdbm --with-gettext --with-gmp --with-iconv --with-jpeg-dir=/usr --with-openssl --with-pcre-regex=/usr --with-zlib --with-layout=GNU --enable-exif --enable-ftp --enable-sockets --with-kerberos --enable-shmop --enable-calendar --with-libxml-dir=/usr --enable-xml --with-mhash --enable-fpm --libdir=/opt/php/lib --with-mysql=mysqlnd --disable-dba --with-unixODBC=/usr --without-pspell --with-curl=/usr --disable-posix --disable-sysvmsg --disable-sysvshm --disable-sysvsem --with-pdo-sqlite --with-pdo-mysql --with-mysqli=mysqlnd --with-pdo-pgsql --with-pgsql --with-imap --with-imap-ssl --with-gd --with-ldap --with-mcrypt --with-tidy --enable-wddx --enable-bcmath --enable-dom --enable-fileinfo --enable-json --enable-mbstring --enable-pdo --enable-phar --enable-soap --enable-xmlreader --enable-xmlwriter --with-xsl --enable-zip --enable-opcache --with-imagick --enable-apcu --enable-apc-bc --enable-redis --enable-oauth --enable-sqlsrv=shared --with-pdo_sqlsrv=shared --with-odbcver=0x0380 host_alias=x86_64-redhat-linux-gnu'
 export PECL=''
 export EXTENSIONS='Core
 OAuth
@@ -31,10 +31,12 @@ hash
 iconv
 imagick
 imap
+ionCube Loader
 json
 ldap
 libxml
 mbstring
+mcrypt
 mysqli
 mysqlnd
 odbc
@@ -43,7 +45,6 @@ pcre
 pdo_mysql
 pdo_pgsql
 pdo_sqlite
-pdo_sqlsrv
 pgsql
 redis
 session
@@ -51,7 +52,6 @@ shmop
 soap
 sockets
 sqlite3
-sqlsrv
 standard
 tidy
 tokenizer
@@ -62,67 +62,72 @@ xmlwriter
 xsl
 zip
 zlib'
-export EXTENSIONS_VERSIONS='Core-7.2.13
+export EXTENSIONS_VERSIONS='Core-7.1.26
 OAuth-2.0.2
-PDO-7.2.13
+PDO-7.1.26
 Phar-2.0.2
-Reflection-7.2.13
-SPL-7.2.13
-SimpleXML-7.2.13
-Zend OPcache-7.2.13
+Reflection-7.1.26
+SPL-7.1.26
+SimpleXML-7.1.26
+Zend OPcache-7.1.26
 apcu-5.1.8
 apm-2.1.3.pantheon4
-bcmath-7.2.13
-bz2-7.2.13
-calendar-7.2.13
-ctype-7.2.13
-curl-7.2.13
-date-7.2.13
+bcmath-7.1.26
+bz2-7.1.26
+calendar-7.1.26
+ctype-7.1.26
+curl-7.1.26
+date-7.1.26
 dom-20031129
-exif-7.2.13
+exif-7.1.26
 fileinfo-1.0.5
-filter-7.2.13
-ftp-7.2.13
-gd-7.2.13
-gettext-7.2.13
-gmp-7.2.13
+filter-7.1.26
+ftp-7.1.26
+gd-7.1.26
+gettext-7.1.26
+gmp-7.1.26
 hash-1.0
-iconv-7.2.13
+iconv-7.1.26
 imagick-3.4.3
-imap-7.2.13
-json-1.6.0
-ldap-7.2.13
-libxml-7.2.13
-mbstring-7.2.13
-mysqli-7.2.13
+imap-7.1.26
+ionCube Loader-
+json-1.5.0
+ldap-7.1.26
+libxml-7.1.26
+mbstring-7.1.26
+mcrypt-7.1.26
+mysqli-7.1.26
 mysqlnd-mysqlnd 5.0.12-dev - 20150407 - $Id: 38fea24f2847fa7519001be390c98ae0acafe387 $
-odbc-7.2.13
-openssl-7.2.13
-pcre-7.2.13
-pdo_mysql-7.2.13
-pdo_pgsql-7.2.13
-pdo_sqlite-7.2.13
-pdo_sqlsrv-5.2.0+10713
-pgsql-7.2.13
+odbc-7.1.26
+openssl-7.1.26
+pcre-7.1.26
+pdo_mysql-7.1.26
+pdo_pgsql-7.1.26
+pdo_sqlite-7.1.26
+pgsql-7.1.26
 redis-3.1.4
-session-7.2.13
-shmop-7.2.13
-soap-7.2.13
-sockets-7.2.13
-sqlite3-7.2.13
-sqlsrv-5.2.0+10713
-standard-7.2.13
-tidy-7.2.13
-tokenizer-7.2.13
-wddx-7.2.13
-xml-7.2.13
-xmlreader-7.2.13
-xmlwriter-7.2.13
-xsl-7.2.13
-zip-1.15.4
-zlib-7.2.13'
+session-7.1.26
+shmop-7.1.26
+soap-7.1.26
+sockets-7.1.26
+sqlite3-7.1.26
+standard-7.1.26
+tidy-7.1.26
+tokenizer-7.1.26
+wddx-7.1.26
+xml-7.1.26
+xmlreader-7.1.26
+xmlwriter-7.1.26
+xsl-7.1.26
+zip-1.13.5
+zlib-7.1.26'
 export CLI_INI_FILE='/var/www/php.ini'
-export CLI_INI='
+export CLI_INI='; Ioncube requires that it be the first thing loaded in the php.ini file.
+; We disable it by default. Enable in settings/config file via:
+;     ini_set('\''ioncube.loader.encoded_paths'\'', '\''/'\'');
+zend_extension = /opt/pantheon/ioncube/10.0.3/ioncube_loader_lin_7.1.so
+ioncube.loader.encoded_paths = -/
+
 [PHP]
 ;;;;;;;;;;;;;;;
 ; PHP Globals ;
@@ -182,7 +187,7 @@ session.gc_maxlifetime = 200000
 ; Using this to insert essential Pantheon functionality.
 ;auto_prepend_file= = /var/www/includes/prepend.php
 
-extension_dir=/opt/php7/lib/20170718
+extension_dir=/opt/php/lib
 
 ; OPCache Configuration
 zend_extension = opcache.so
@@ -216,18 +221,20 @@ apm.statsd_enabled=0
 apm.socket_enabled=0
 ; Set the root CA
 apm.http_certificate_authorities="/etc/pki/tls/certs/ca-bundle.crt"
-apm.http_server="https://api.live.example.com:8443/sites/docker/environments/dev/events"
+apm.http_server="https://api.live.example.com:8443/sites/docker/environments/php7-1/events"
 apm.http_client_certificate="/var/www/certs/binding.crt"
 apm.http_client_key="/var/www/certs/binding.key"
 
 
-; sqlsrv
-extension=pdo_sqlsrv.so
-extension=sqlsrv.so
 
 '
 export FPM_INI_FILE='/var/www/php.ini'
-export FPM_INI='
+export FPM_INI='; Ioncube requires that it be the first thing loaded in the php.ini file.
+; We disable it by default. Enable in settings/config file via:
+;     ini_set('\''ioncube.loader.encoded_paths'\'', '\''/'\'');
+zend_extension = /opt/pantheon/ioncube/10.0.3/ioncube_loader_lin_7.1.so
+ioncube.loader.encoded_paths = -/
+
 [PHP]
 ;;;;;;;;;;;;;;;
 ; PHP Globals ;
@@ -287,7 +294,7 @@ session.gc_maxlifetime = 200000
 ; Using this to insert essential Pantheon functionality.
 ;auto_prepend_file= = /var/www/includes/prepend.php
 
-extension_dir=/opt/php7/lib/20170718
+extension_dir=/opt/php/lib
 
 ; OPCache Configuration
 zend_extension = opcache.so
@@ -321,14 +328,11 @@ apm.statsd_enabled=0
 apm.socket_enabled=0
 ; Set the root CA
 apm.http_certificate_authorities="/etc/pki/tls/certs/ca-bundle.crt"
-apm.http_server="https://api.live.example.com:8443/sites/docker/environments/dev/events"
+apm.http_server="https://api.live.example.com:8443/sites/docker/environments/php7-1/events"
 apm.http_client_certificate="/var/www/certs/binding.crt"
 apm.http_client_key="/var/www/certs/binding.key"
 
 
-; sqlsrv
-extension=pdo_sqlsrv.so
-extension=sqlsrv.so
 
 '
 export CONFIG='allow_url_fopen: 1
@@ -361,7 +365,7 @@ apm.http_exception_mode: 1
 apm.http_max_backtrace_length: 0
 apm.http_process_silenced_events: 1
 apm.http_request_timeout: 1000
-apm.http_server: https://api.live.example.com:8443/sites/docker/environments/dev/events
+apm.http_server: https://api.live.example.com:8443/sites/docker/environments/php7-1/events
 apm.http_stats_enabled: 1
 apm.mysql_db: apm
 apm.mysql_enabled: 0
@@ -455,6 +459,28 @@ highlight.html: #000000
 highlight.keyword: #007700
 highlight.string: #DD0000
 html_errors: 0
+ic24.api.log_msg_errors: 0
+ic24.api.max_timeout: 7
+ic24.api_access_key: 
+ic24.api_check_ip: 1
+ic24.cache_path: 
+ic24.dump_cache: 0
+ic24.enable: 0
+ic24.home_dir: 
+ic24.phperr.enable: auto
+ic24.phperr.ignore: 0
+ic24.sec.approve_included_files: 
+ic24.sec.block_stdin: 1
+ic24.sec.block_uploaded_files: 1
+ic24.sec.enable: auto
+ic24.sec.exclusion_key: 
+ic24.sec.initial_action: block
+ic24.sec.initial_notify: always
+ic24.sec.initial_state: 1
+ic24.sec.stop_on_error: 1
+ic24.sec.trusted_include_paths: 
+ic24.slt: 7
+ic24.update_domains_retry_interval: 30
 iconv.input_encoding: 
 iconv.internal_encoding: 
 iconv.output_encoding: 
@@ -469,6 +495,7 @@ implicit_flush: 1
 include_path: .:/usr/share/pear:/usr/share/php
 input_encoding: 
 internal_encoding: 
+ioncube.loader.encoded_paths: -/
 ldap.max_links: -1
 log_errors: 1
 log_errors_max_len: 1024
@@ -490,6 +517,8 @@ mbstring.internal_encoding:
 mbstring.language: neutral
 mbstring.strict_detection: 0
 mbstring.substitute_character: 
+mcrypt.algorithms_dir: 
+mcrypt.modes_dir: 
 memory_limit: 256M
 mysqli.allow_local_infile: 1
 mysqli.allow_persistent: 1
@@ -510,7 +539,7 @@ mysqlnd.log_mask: 0
 mysqlnd.mempool_default_size: 16000
 mysqlnd.net_cmd_buffer_size: 4096
 mysqlnd.net_read_buffer_size: 32768
-mysqlnd.net_read_timeout: 86400
+mysqlnd.net_read_timeout: 31536000
 mysqlnd.sha256_server_public_key: 
 mysqlnd.trace_alloc: 
 odbc.allow_persistent: 1
@@ -530,6 +559,7 @@ opcache.enable: 1
 opcache.enable_cli: 0
 opcache.enable_file_override: 0
 opcache.error_log: 
+opcache.fast_shutdown: 1
 opcache.file_cache: 
 opcache.file_cache_consistency_checks: 1
 opcache.file_cache_only: 0
@@ -566,8 +596,6 @@ pcre.backtrack_limit: 1000000
 pcre.jit: 1
 pcre.recursion_limit: 100000
 pdo_mysql.default_socket: /tmp/mysql.sock
-pdo_sqlsrv.client_buffer_max_kb_size: 10240
-pdo_sqlsrv.log_severity: 0
 pgsql.allow_persistent: 1
 pgsql.auto_reset_persistent: 0
 pgsql.ignore_notice: 0
@@ -577,6 +605,8 @@ pgsql.max_persistent: -1
 phar.cache_list: 
 phar.readonly: 1
 phar.require_hash: 1
+phpd: 1
+phpd.t: 1
 post_max_size: 100M
 precision: 14
 realpath_cache_size: 800K
@@ -601,10 +631,10 @@ session.auto_start: 0
 session.cache_expire: 200000
 session.cache_limiter: nocache
 session.cookie_domain: 
-session.cookie_httponly: 0
+session.cookie_httponly: 
 session.cookie_lifetime: 2000000
 session.cookie_path: /
-session.cookie_secure: 0
+session.cookie_secure: 
 session.gc_divisor: 100
 session.gc_maxlifetime: 200000
 session.gc_probability: 1
@@ -636,11 +666,8 @@ soap.wsdl_cache_dir: /tmp
 soap.wsdl_cache_enabled: 1
 soap.wsdl_cache_limit: 5
 soap.wsdl_cache_ttl: 86400
+sql.safe_mode: 0
 sqlite3.extension_dir: 
-sqlsrv.ClientBufferMaxKBSize: 10240
-sqlsrv.LogSeverity: 0
-sqlsrv.LogSubsystems: 0
-sqlsrv.WarningsReturnAsErrors: 1
 sys_temp_dir: /var/www/tmp
 tidy.clean_output: 0
 tidy.default_config: 
