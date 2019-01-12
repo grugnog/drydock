@@ -4,11 +4,6 @@ set -euo pipefail
 export COMPOSE_FILE=docker-compose.yml
 export COMPOSE_PROJECT_NAME=drupal_acquia_${VERSION}_${BRANCH_NAME}
 
-if [ "${USER}" == "" ]; then
-  # Jenkins doesn't set $USER, so set it to the workspace directory owner.
-  export USER=$(stat -c '%u' .)
-fi
-
 echo "Cleaning up any failed builds"
 docker-compose rm -sf
 rm -rf docroot
@@ -16,7 +11,7 @@ rm -rf docroot
 echo "Building containers"
 docker-compose build
 echo "Downloading Drupal core"
-docker run --volume "$(pwd)":/app --user $(id -u ${USER}):$(id -g ${USER}) drush/drush dl drupal -y --drupal-project-rename=docroot
+docker run --volume "$(pwd)":/app --user "$(whoami)" drush/drush dl drupal -y --drupal-project-rename=docroot
 
 echo "Starting containers"
 docker-compose up --detach
