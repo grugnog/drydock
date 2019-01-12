@@ -11,7 +11,7 @@ rm -rf docroot
 echo "Building containers"
 docker-compose build
 echo "Downloading Drupal core"
-docker run --volume "$(pwd)":/app --user "$(whoami)" drush/drush dl drupal -y --drupal-project-rename=docroot
+docker run --volume "$(pwd)":/app --user "$(id -u):$(id -g)" drush/drush dl drupal -y --drupal-project-rename=docroot
 
 echo "Starting containers"
 docker-compose up --detach
