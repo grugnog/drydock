@@ -94,7 +94,7 @@ RUN . /usr/src/config; \
         curl -L http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz | tar xvz --directory /opt/pantheon/ioncube/10.0.3/ --strip-components=1; \
         fi; \
         # Ensure each extension is only listed once in php.ini
-        export EXT=$(grep -F '^extension=' /opt/php/etc/php.ini | tr -d '"' | sort -u); \
+        export EXT=$(grep '^extension=' /opt/php/etc/php.ini | tr -d '"' | sort -u); \
         sed -i'' /opt/php/etc/php.ini -e 's/^extension=.*//g'; \
         echo "${EXT}" >> /opt/php/etc/php.ini; \
         \
