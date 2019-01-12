@@ -2,6 +2,9 @@ FROM ubuntu:16.04
 
 # NOTE: This is not a production build: for sandbox/CI use only
 
+# Pass the version of PHP to use as a build arg - must have corresponding config file
+ARG version=7.2
+
 # Build dependencies - removed after build is complete
 ENV BUILDDEPS autoconf \
         dpkg-dev \
@@ -46,11 +49,17 @@ ENV BUILDDEPS autoconf \
         re2c \
         zlib1g-dev
 
+# We use bash process substitution to simplify the validation diff commands
 SHELL ["/bin/bash", "-c"]
-ENV PATH=$PATH:/usr/local/php7.1/bin
-COPY currentconfig /usr/src
 
-RUN . /usr/src/currentconfig; \
+# Set the path to include the build PHP bin directory
+ENV PATH=$PATH:/usr/local/php/bin
+
+# Copy in the config file specified by the "version" build arg
+COPY "${version}"-config /usr/src/config
+
+# Install prerequisites, build PHP & extensions, validate the build then clean up
+RUN . /usr/src/config; \
         apt-get update && apt-get install -y \
         ${BUILDDEPS} \
         # Permanently installed dependencies
@@ -79,7 +88,7 @@ RUN . /usr/src/currentconfig; \
         make install; \
         \
         # Copy the etc configuration into place, replacing all existing config.
-        mkdir -p "/usr/local/php7.1/etc/conf.d/" "/usr/local/php7.1/etc/cli/conf.d/" "/usr/local/php7.1/etc/fpm/conf.d/"; \
+        mkdir -p "/usr/local/php/etc/conf.d/" "/usr/local/php/etc/cli/conf.d/" "/usr/local/php/etc/fpm/conf.d/"; \
         echo "${CLI_INI}" > "${CLI_INI_FILE}"; \
         echo "${FPM_INI}" > "${FPM_INI_FILE}"; \
         \
@@ -96,12 +105,13 @@ RUN . /usr/src/currentconfig; \
         make install ;\
         # Install, including ssh2 (which is installed but not via PECL)
         yes '' | pecl install -n ${PECL} ssh2-1.1.2; \
-        # php.ini is not pointing to the pecl installation directory, so move the files
-        mv /usr/local/php7.1/lib/php/extensions/no-debug-non-zts-20160303/* /usr/local/php7.1/lib/php/extensions; \
-        #$ Repeat the install so that extensions with dependencies can install
+        # Move the extensions from the extension API version directory to the /opt/php/lib directory to simplify configuration (PECL ext_dir does not work)
+        mv /usr/local/php/lib/php/extensions/no-debug-non-zts-[0-9]*/* /usr/local/php/lib/php/extensions; \
+        # Repeat the install/move so that extensions with dependencies can install
         yes '' | pecl install -n ${PECL}; \
-        # php.ini is not pointing to the pecl installation directory, so move the files
-        mv /usr/local/php7.1/lib/php/extensions/no-debug-non-zts-20160303/* /usr/local/php7.1/lib/php/extensions; \
+        mv /usr/local/php/lib/php/extensions/no-debug-non-zts-[0-9]*/* /usr/local/php/lib/php/extensions; \
+        # Configure php-fpm to use an existant user
+        sed -i'' -e 's/^group = nobody/group = nogroup/' /usr/local/php/etc/php-fpm.d/www.conf.default; \
         \
         # Clean up
         rm -rf /usr/src/*; \
@@ -112,9 +122,8 @@ RUN . /usr/src/currentconfig; \
         diff -uw <(php -r '$e = get_loaded_extensions(); sort($e); print(implode(PHP_EOL, $e));') <(echo "${EXTENSIONS}"); if [ $? != 0 ]; then echo "PHP extensions do not match expected"; exit 2; fi; \
         diff -uw <(php -r 'foreach (ini_get_all() as $k => $v) { print "$k: $v['global_value']\n"; }') <(echo "${CONFIG}"); if [ $? != 0 ]; then echo "PHP config does not match expected"; exit 3; fi
 
-RUN cd "/usr/local/php7.1/etc"; \
-        sed -i'' -e 's/^group = nobody/group = nogroup/' php-fpm.d/www.conf.default; \
-        # Configure php-fpm for Docker: the below is sourced from https://github.com/docker-library/php/blob/master/7.1/stretch/fpm/Dockerfile#L198
+# Configure php-fpm for Docker: the below is sourced from https://github.com/docker-library/php/blob/master/7.1/stretch/fpm/Dockerfile#L198
+RUN cd "/usr/local/php/etc"; \
         if [ -d php-fpm.d ]; then \
         # for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
         sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
@@ -149,4 +158,4 @@ RUN cd "/usr/local/php7.1/etc"; \
         echo 'listen = 9000'; \
         } | tee php-fpm.d/zz-docker.conf
 
-CMD /usr/local/php7.1/sbin/php-fpm
+CMD /usr/local/php/sbin/php-fpm
