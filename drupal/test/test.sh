@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-export COMPOSE_FILE=docker-compose-7.1.yml
+export COMPOSE_FILE=docker-compose.yml
 export COMPOSE_PROJECT_NAME=drupal_acquia_${BRANCH_NAME}
 
 echo "Cleaning up any failed builds"
