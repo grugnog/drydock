@@ -6,9 +6,9 @@ services:
     volumes:
       - .:/var/www
     depends_on:
-      - php-fpm
-  php-fpm:
-    build: php-fpm-7.1
+      - php
+  php:
+    build: php
     volumes:
       - .:/var/www
     depends_on:
