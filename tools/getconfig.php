@@ -159,9 +159,16 @@ if ($platform == 'pantheon') {
     $filters['@auto_prepend_file@'] = ';auto_prepend_file=';
     // Include pear as we need it for sqlsrv ext.
     $filters['@--without-pear@'] = '--with-pear';
+    // Remove PHP version number from build directory.
+    $filters['@/opt/php[0-9.-]*@'] = '/opt/php';
     // Normalize the extension dir to work around pecl install issue.
-    $filters['@extension_dir *=.*@'] = 'extension_dir=/opt/php7/lib/20170718';
-    $filters['@--libdir=/usr/lib64/php@'] = '--libdir=/opt/php7/lib';
+    $filters['@extension_dir *=.*@'] = 'extension_dir=/opt/php/lib';
+    $filters['@--libdir=/usr/lib64/php@'] = '--libdir=/opt/php/lib';
+}
+// Acquia specific.
+if ($platform == 'acquia') {
+    // Remove PHP version number from build directory.
+    $filters['@/usr/local/php[0-9.-]*@'] = '/usr/local/php';
 }
 
 // Filter and serialize final output.
