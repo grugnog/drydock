@@ -5,7 +5,7 @@ export COMPOSE_FILE=docker-compose.yml
 export COMPOSE_PROJECT_NAME=drupal_acquia_${VERSION}_${BRANCH_NAME}
 
 echo "Cleaning up any failed builds"
-docker-compose rm -sf
+docker-compose down --rmi local -v
 rm -rf docroot
 
 echo "Building containers"
@@ -38,5 +38,5 @@ echo "PHP version OK"
 
 
 echo "Cleaning up"
-docker-compose rm -f
+docker-compose down --rmi local -v
 rm -rf docroot
