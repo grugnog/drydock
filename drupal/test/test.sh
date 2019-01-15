@@ -20,7 +20,7 @@ sleep 10
 # TODO: Actually install Drupal here and also test dumping and autoloading a database.
 
 echo "Fetching page to check status"
-STATUS=$(docker-compose run --rm php curl --location --silent --output /dev/null --write-out "%{http_code}" "http://httpd/")
+STATUS=$(docker-compose run --no-deps --rm php curl --location --silent --output /dev/null --write-out "%{http_code}" "http://web/")
 echo "Status: ${STATUS}"
 if [ "${STATUS}" != "200" ]; then
   echo "httpd container not responding with 200 HTTP response code"

@@ -39,8 +39,27 @@ MYSQLVERSION=$(echo "$RAWVERSION" | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
 # Update the version number in the Dockerfile with the extracted number
 sed -i'' -e "s/FROM mariadb:[0-9.]*$/FROM mariadb:$MYSQLVERSION/" mysql/Dockerfile
 
-echo "Updating Nginx version"
+echo "Updating Nginx version and config"
 # Get Nginx version number
 NGINXVERSION=$(terminus remote:drush "${SITE}.${MULTIDEV}" ev "shell_exec('/usr/sbin/nginx -v')" | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
 # Update the version number in the Dockerfile with the extracted number
 sed -i'' -e "s/FROM nginx:[0-9.]*$/FROM nginx:$NGINXVERSION/" nginx/Dockerfile
+(
+  # Fetch a sample nginx.conf
+  cd nginx
+  sftp -o Port=2222 "${HOST}":code/ <<< $'get ../nginx.conf'
+  # Update the config to work in Docker and remove access keys etc
+  sed -i'' \
+  -e 's@listen \[::\]@#listen [::]@g' \
+  -e 's@listen [0-9]* ssl;@listen 80;@g' \
+  -e 's@/srv/bindings/[^/]*/code/@/var/www/docroot/@g' \
+  -e 's@/srv/bindings/[^/]*/logs/nginx-\(access\|error\).log@/var/log/nginx/\1.log@g' \
+  -e 's@/srv/bindings/[^/]*/mime.types@/etc/nginx/mime.types@g' \
+  -e 's@/srv/bindings/[^/]*/@/var/@g' \
+  -e 's@.*X-Pantheon-.*@@g' \
+  -e "s@_access_key != '[^']*'@_access_key != 'docker'@g" \
+  -e 's@/srv/includes/fastcgi_params@/etc/nginx/fastcgi_params@g' \
+  -e 's@^[ ]*ssl_@# ssl_@g' \
+  -e 's@fastcgi_pass [^;]*;@fastcgi_pass php:9000;@g' \
+  nginx.conf
+)
