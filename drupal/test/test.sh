@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+HOST=$(basename "${PWD}")
 export COMPOSE_FILE=docker-compose.yml
-export COMPOSE_PROJECT_NAME=drupal_acquia_${VERSION}_${BRANCH_NAME}
+export COMPOSE_PROJECT_NAME=drupal_${HOST}_${VERSION}_${BRANCH_NAME}
 
 echo "Cleaning up any failed builds"
 docker-compose down --rmi local -v
