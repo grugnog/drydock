@@ -120,9 +120,9 @@ RUN . /usr/src/config; \
         apt-get purge -y ${BUILDDEPS}; \
         \
         # Validate that distro, loaded extensions and config match
-        if diff -uw <(lsb_release -ir) <(echo "${DISTRO}"); then echo "Distro does not match expected"; exit 1; fi; \
-        if diff -uw <(php -r '$e = get_loaded_extensions(); sort($e); print(implode(PHP_EOL, $e));') <(echo "${EXTENSIONS}"); then echo "PHP extensions do not match expected"; exit 2; fi; \
-        if diff -uw <(php -r 'foreach (ini_get_all() as $k => $v) { print "$k: $v['global_value']\n"; }') <(echo "${CONFIG}"); then echo "PHP config does not match expected"; exit 3; fi
+        if ! diff -uw <(lsb_release -ir) <(echo "${DISTRO}"); then echo "Distro does not match expected"; exit 1; fi; \
+        if ! diff -uw <(php -r '$e = get_loaded_extensions(); sort($e); print(implode(PHP_EOL, $e));') <(echo "${EXTENSIONS}"); then echo "PHP extensions do not match expected"; exit 2; fi; \
+        if ! diff -uw <(php -r 'foreach (ini_get_all() as $k => $v) { print "$k: $v['global_value']\n"; }') <(echo "${CONFIG}"); then echo "PHP config does not match expected"; exit 3; fi
 
 WORKDIR /usr/local/php/etc
 # Configure php-fpm for Docker: the below is sourced from https://github.com/docker-library/php/blob/master/7.1/stretch/fpm/Dockerfile#L198
