@@ -24,16 +24,16 @@ echo "Fetching page to check status"
 STATUS=$(docker-compose run --no-deps --rm php curl --location --silent --output /dev/null --write-out "%{http_code}" "http://web/")
 echo "Status: ${STATUS}"
 if [ "${STATUS}" != "200" ]; then
-  echo "httpd container not responding with 200 HTTP response code"
-  exit 1
+    echo "httpd container not responding with 200 HTTP response code"
+    exit 1
 fi
 echo "Page status OK"
 
 echo "Checking PHP version"
 ACTUAL=$(docker-compose run --rm php php --version | head -n 1 | cut -d " " -f 2 | cut -d'.' -f1-2)
 if [ "${ACTUAL}" != "${VERSION}" ]; then
-  echo "PHP does not match expected version number"
-  exit 2
+    echo "PHP does not match expected version number"
+    exit 2
 fi
 echo "PHP version OK"
 
