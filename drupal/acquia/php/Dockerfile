@@ -75,7 +75,7 @@ RUN . /usr/src/config; \
         \
         # Download and build php
         cd /usr/src || exit; \
-        curl -o php.tar.xz "http://us1.php.net/get/php-${EXACT_VERSION}.tar.xz/from/this/mirror"; \
+        curl --silent --location --output php.tar.xz "http://us1.php.net/get/php-${EXACT_VERSION}.tar.xz/from/this/mirror"; \
         tar xf php.tar.xz; \
         cd /usr/src/php-* || exit; \
         # Workaround for library issue on Ubuntu 16.04
@@ -98,7 +98,7 @@ RUN . /usr/src/config; \
         pecl channel-update pecl.php.net; \
         # Install tideways from source (not available from pecl)
         cd /usr/src || exit; \
-        curl -o xhprof.tar.gz https://github.com/tideways/php-xhprof-extension/archive/v4.1.5.tar.gz; \
+        curl --silent --location --output xhprof.tar.gz https://github.com/tideways/php-xhprof-extension/archive/v4.1.5.tar.gz; \
         tar xzf xhprof.tar.gz; \
         cd php-xhprof-extension-* || exit; \
         phpize; \
