@@ -68,12 +68,12 @@ RUN . /usr/src/config; \
         wget \
         xz; \
         # Reqs for sqlsrv extension
-        curl https://packages.microsoft.com/config/rhel/7/prod.repo > /etc/yum.repos.d/mssql-release.repo; \
+        curl --silent --location --output /etc/yum.repos.d/mssql-release.repo https://packages.microsoft.com/config/rhel/7/prod.repo; \
         ACCEPT_EULA=Y dnf install -y msodbcsql; \
         \
         # Download and build php
         cd /usr/src || exit; \
-        curl -o php.tar.xz "http://us1.php.net/get/php-${EXACT_VERSION}.tar.xz/from/this/mirror"; \
+        curl --silent --location --output php.tar.xz "http://us1.php.net/get/php-${EXACT_VERSION}.tar.xz/from/this/mirror"; \
         tar xf php.tar.xz; \
         cd /usr/src/php-* || exit; \
         # Build CLI and FPM (single build step, CLI and FPM use identical configure options)
@@ -95,7 +95,7 @@ RUN . /usr/src/config; \
         # Install ionCube if present
         if [[ ${EXTENSIONS} == *"ionCube Loader"* ]]; then \
         mkdir -p /opt/pantheon/ioncube/10.0.3/; \
-        curl -L http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz | tar xvz --directory /opt/pantheon/ioncube/10.0.3/ --strip-components=1; \
+        curl --silent --location http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz | tar xvz --directory /opt/pantheon/ioncube/10.0.3/ --strip-components=1; \
         fi; \
         # Ensure each extension is only listed once in php.ini
         EXT=$(grep '^extension=' /opt/php/etc/php.ini | tr -d '"' | sort -u); \
