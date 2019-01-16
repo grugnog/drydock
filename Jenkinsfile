@@ -13,7 +13,7 @@ pipeline {
                     // Lint Dockerfiles using hadolint
                     sh 'find * -name Dockerfile* -print0 | xargs -n1 -I "{}" -0 docker run -i --rm -v "$PWD":/src hadolint/hadolint hadolint "/src/{}"'
                     // Lint PHP using php-cs-fixer
-                    sh 'docker run -it -v "$(pwd)":/workdir -w /workdir -e PHP_CS_FIXER_IGNORE_ENV=1 unibeautify/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no tools/getconfig.php'
+                    sh 'docker run -i -v "$(pwd)":/workdir -w /workdir -e PHP_CS_FIXER_IGNORE_ENV=1 unibeautify/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no tools/getconfig.php'
                 }
             }
         }
