@@ -99,7 +99,7 @@ if (file_exists('/etc/redhat-release')) {
     $output['DISTRO'] = trim(shell_exec('lsb_release -ir'));
 }
 
-$output['VERSION'] = phpversion();
+$output['EXACT_VERSION'] = phpversion();
 $output['CLI_CONFIGURE_OPTIONS'] = configureOptions(PHP_BINARY);
 $output['FPM_CONFIGURE_OPTIONS'] = configureOptions(phpFpm());
 

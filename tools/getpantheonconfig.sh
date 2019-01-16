@@ -2,12 +2,12 @@
 set -euo pipefail
 SUPPORTED_PHP=( 7.1 7.2 )
 if [ -z "$SITE" ]; then
-  echo 'Specify a Pantheon $SITE to get configuration for.'
-  echo 'e.g. export SITE=mysitename'
+  echo "Specify a Pantheon \$SITE to get configuration for."
+  echo "e.g. export SITE=mysitename"
   echo "Must have a multidev instance for each supported PHP version (${SUPPORTED_PHP[*]})"
-  echo '- PHP versions in each multidev must be configured with pantheon.yml.'
-  echo '- Multidevs should be named `PHPx-y` where x and y are the PHP major and minor version.'
-  echo '- Each multidev must be in sftp mode (not git mode).'
+  echo "- PHP versions in each multidev must be configured with pantheon.yml."
+  echo "- Multidevs should be named 'PHPx-y' where x and y are the PHP major and minor version."
+  echo "- Each multidev must be in sftp mode (not git mode)."
   exit 1
 fi
 if [[ ! -f php/Dockerfile || ! -f mysql/Dockerfile || ! -f nginx/Dockerfile ]]; then

@@ -2,7 +2,7 @@
 set -euo pipefail
 SUPPORTED_PHP=( 7.1 7.2 )
 if [ -z "$HOST" ]; then
-  echo 'Specify a $HOST to get configuration for.'
+  echo "Specify a \$HOST to get configuration for."
   exit 1
 fi
 if [[ ! -f php/Dockerfile || ! -f mysql/Dockerfile || ! -f httpd/Dockerfile ]]; then
@@ -24,6 +24,7 @@ echo "Updating Percona version"
 # Get a regular site alias to connect to
 ALIAS=$(ssh "$HOST" drush sa --local-only | grep -E '\.(prod|test|dev)$' | head -n1)
 # Connect to the alias and output the version string
+# shellcheck disable=SC2029
 RAWVERSION=$(ssh "$HOST" "drush $ALIAS sqlq 'SHOW VARIABLES LIKE \"version\"'")
 # Extract the primary version number from the version string
 MYSQLVERSION=$(echo "$RAWVERSION" | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')

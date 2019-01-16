@@ -46,7 +46,7 @@ ENV BUILDDEPS aspell-devel \
         zlib-devel
 
 # We use bash process substitution to simplify the validation diff commands
-SHELL ["/bin/bash", "-c"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Set the path to include the build PHP bin directory
 ENV PATH=$PATH:/opt/php/bin
@@ -55,6 +55,8 @@ ENV PATH=$PATH:/opt/php/bin
 COPY "${version}"-config /usr/src/config
 
 # Install prerequisites, build PHP & extensions, validate the build then clean up
+# Ignore some linting rules that interfere with build/validation (cd, php vars etc)
+# hadolint ignore=SC1091,SC2016,SC2046,SC2086,DL3003,DL3008
 RUN . /usr/src/config; \
         touch /var/lib/rpm/* \
         && dnf -y upgrade --setopt=deltarpm=false \
@@ -70,11 +72,12 @@ RUN . /usr/src/config; \
         ACCEPT_EULA=Y dnf install -y msodbcsql; \
         \
         # Download and build php
-        cd /usr/src; \
-        wget -O php.tar.xz "http://us1.php.net/get/php-${VERSION}.tar.xz/from/this/mirror"; \
+        cd /usr/src || exit; \
+        curl -o php.tar.xz "http://us1.php.net/get/php-${EXACT_VERSION}.tar.xz/from/this/mirror"; \
         tar xf php.tar.xz; \
-        cd /usr/src/php-*; \
+        cd /usr/src/php-* || exit; \
         # Build CLI and FPM (single build step, CLI and FPM use identical configure options)
+        # Variable not quoted as it contains arguments that are separate words
         ./configure ${CLI_CONFIGURE_OPTIONS}; \
         make -j "$(nproc)"; \
         make install; \
@@ -85,7 +88,8 @@ RUN . /usr/src/config; \
         ln -s /usr/lib64/mysql/libmysqlclient* /usr/lib/; \
         # Install PHP extensions - we use the versions from EXTENSIONS_VERSIONS since Pantheon doesn't list the pecl packages
         pear config-set php_ini /opt/php/etc/php.ini; \
-        yes '' | pecl install --force $(echo "${EXTENSIONS_VERSIONS}" | grep -Eio "(${PECL_PACKAGES})-[0-9]\.[0-9]\.[0-9]"); \
+        # Variable not quoted as it contains arguments that are separate words
+        yes '' | pecl install --force $(echo "${EXTENSIONS_VERSIONS}" | grep -Eio "(${PECL_PACKAGES})-[0-9]\\.[0-9]\\.[0-9]"); \
         # Move the extensions from the extension API version directory to the /opt/php/lib directory to simplify configuration (PECL ext_dir does not work)
         mv /opt/php/lib/[0-9]*/* /opt/php/lib; \
         # Install ionCube if present
@@ -94,7 +98,7 @@ RUN . /usr/src/config; \
         curl -L http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz | tar xvz --directory /opt/pantheon/ioncube/10.0.3/ --strip-components=1; \
         fi; \
         # Ensure each extension is only listed once in php.ini
-        export EXT=$(grep '^extension=' /opt/php/etc/php.ini | tr -d '"' | sort -u); \
+        EXT=$(grep '^extension=' /opt/php/etc/php.ini | tr -d '"' | sort -u); \
         sed -i'' /opt/php/etc/php.ini -e 's/^extension=.*//g'; \
         echo "${EXT}" >> /opt/php/etc/php.ini; \
         \
@@ -104,16 +108,16 @@ RUN . /usr/src/config; \
         dnf clean all; \
         \
         # Validate that distro, loaded extensions and config match
-        diff -uw /etc/redhat-release <(echo "${DISTRO}"); if [ $? != 0 ]; then echo "Distro does not match expected"; exit 1; fi; \
-        diff -uw <(php -r '$e = get_loaded_extensions(); sort($e); print(implode(PHP_EOL, $e));') <(echo "${EXTENSIONS}"); if [ $? != 0 ]; then echo "PHP extensions do not match expected"; exit 2; fi; \
-        diff -uw \
+        if diff -uw /etc/redhat-release <(echo "${DISTRO}"); then echo "Distro does not match expected"; exit 1; fi; \
+        if diff -uw <(php -r '$e = get_loaded_extensions(); sort($e); print(implode(PHP_EOL, $e));') <(echo "${EXTENSIONS}"); then echo "PHP extensions do not match expected"; exit 2; fi; \
+        if diff -uw \
         <(php -r 'foreach (ini_get_all() as $k => $v) { print "$k: $v['global_value']\n"; }' | grep -Ev "($CONFIG_EXCLUDE)") \
         <(echo "${CONFIG}" | grep -Ev "($CONFIG_EXCLUDE)"); \
-        if [ $? != 0 ]; then echo "PHP config does not match expected"; exit 3; fi
+        then echo "PHP config does not match expected"; exit 3; fi
 
+WORKDIR /opt/php/etc
 # Configure php-fpm for Docker: the below is sourced from https://github.com/docker-library/php/blob/master/7.1/stretch/fpm/Dockerfile#L198
-RUN cd "/opt/php/etc"; \
-        if [ -d php-fpm.d ]; then \
+RUN if [ -d php-fpm.d ]; then \
         # for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
         sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
         cp php-fpm.d/www.conf.default php-fpm.d/www.conf; \
@@ -147,4 +151,4 @@ RUN cd "/opt/php/etc"; \
         echo 'listen = 9000'; \
         } | tee php-fpm.d/zz-docker.conf
 
-CMD /opt/php/sbin/php-fpm
+CMD ["/opt/php/sbin/php-fpm"]

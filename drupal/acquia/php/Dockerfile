@@ -50,7 +50,7 @@ ENV BUILDDEPS autoconf \
         zlib1g-dev
 
 # We use bash process substitution to simplify the validation diff commands
-SHELL ["/bin/bash", "-c"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Set the path to include the build PHP bin directory
 ENV PATH=$PATH:/usr/local/php/bin
@@ -59,6 +59,8 @@ ENV PATH=$PATH:/usr/local/php/bin
 COPY "${version}"-config /usr/src/config
 
 # Install prerequisites, build PHP & extensions, validate the build then clean up
+# Ignore some linting rules that interfere with build/validation (cd, php vars etc)
+# hadolint ignore=SC1091,SC2016,SC2086,DL3003,DL3008
 RUN . /usr/src/config; \
         apt-get update && apt-get install -y \
         ${BUILDDEPS} \
@@ -72,17 +74,17 @@ RUN . /usr/src/config; \
         --no-install-recommends && rm -r /var/lib/apt/lists/*; \
         \
         # Download and build php
-        cd /usr/src; \
-        wget -O php.tar.xz "http://us1.php.net/get/php-${VERSION}.tar.xz/from/this/mirror"; \
+        cd /usr/src || exit; \
+        curl -o php.tar.xz "http://us1.php.net/get/php-${EXACT_VERSION}.tar.xz/from/this/mirror"; \
         tar xf php.tar.xz; \
-        cd /usr/src/php-*; \
+        cd /usr/src/php-* || exit; \
         # Workaround for library issue on Ubuntu 16.04
         ln -s /usr/lib/libc-client.a /usr/lib/x86_64-linux-gnu/libc-client.a; \
-        # Build CLI
+        # Build CLI - variable not quoted as it contains arguments that are separate words
         ./configure ${CLI_CONFIGURE_OPTIONS}; \
         make -j "$(nproc)"; \
         make install; \
-        # Build FPM
+        # Build FPM - variable not quoted as it contains arguments that are separate words
         ./configure ${FPM_CONFIGURE_OPTIONS}; \
         make -j "$(nproc)"; \
         make install; \
@@ -95,10 +97,10 @@ RUN . /usr/src/config; \
         # Install PHP extensions
         pecl channel-update pecl.php.net; \
         # Install tideways from source (not available from pecl)
-        cd /usr/src; \
-        wget https://github.com/tideways/php-xhprof-extension/archive/v4.1.5.tar.gz; \
-        tar xzf v4.1.5.tar.gz; \
-        cd php-xhprof-extension-*; \
+        cd /usr/src || exit; \
+        curl -o xhprof.tar.gz https://github.com/tideways/php-xhprof-extension/archive/v4.1.5.tar.gz; \
+        tar xzf xhprof.tar.gz; \
+        cd php-xhprof-extension-* || exit; \
         phpize; \
         ./configure; \
         make; \
@@ -118,13 +120,13 @@ RUN . /usr/src/config; \
         apt-get purge -y ${BUILDDEPS}; \
         \
         # Validate that distro, loaded extensions and config match
-        diff -uw <(lsb_release -ir) <(echo "${DISTRO}"); if [ $? != 0 ]; then echo "Distro does not match expected"; exit 1; fi; \
-        diff -uw <(php -r '$e = get_loaded_extensions(); sort($e); print(implode(PHP_EOL, $e));') <(echo "${EXTENSIONS}"); if [ $? != 0 ]; then echo "PHP extensions do not match expected"; exit 2; fi; \
-        diff -uw <(php -r 'foreach (ini_get_all() as $k => $v) { print "$k: $v['global_value']\n"; }') <(echo "${CONFIG}"); if [ $? != 0 ]; then echo "PHP config does not match expected"; exit 3; fi
+        if diff -uw <(lsb_release -ir) <(echo "${DISTRO}"); then echo "Distro does not match expected"; exit 1; fi; \
+        if diff -uw <(php -r '$e = get_loaded_extensions(); sort($e); print(implode(PHP_EOL, $e));') <(echo "${EXTENSIONS}"); then echo "PHP extensions do not match expected"; exit 2; fi; \
+        if diff -uw <(php -r 'foreach (ini_get_all() as $k => $v) { print "$k: $v['global_value']\n"; }') <(echo "${CONFIG}"); then echo "PHP config does not match expected"; exit 3; fi
 
+WORKDIR /usr/local/php/etc
 # Configure php-fpm for Docker: the below is sourced from https://github.com/docker-library/php/blob/master/7.1/stretch/fpm/Dockerfile#L198
-RUN cd "/usr/local/php/etc"; \
-        if [ -d php-fpm.d ]; then \
+RUN if [ -d php-fpm.d ]; then \
         # for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
         sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
         cp php-fpm.d/www.conf.default php-fpm.d/www.conf; \
@@ -158,4 +160,5 @@ RUN cd "/usr/local/php/etc"; \
         echo 'listen = 9000'; \
         } | tee php-fpm.d/zz-docker.conf
 
-CMD /usr/local/php/sbin/php-fpm
+WORKDIR /var/www
+CMD ["/usr/local/php/sbin/php-fpm"]
