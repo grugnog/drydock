@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Set some defaults if needed.
+DOCKER_ORG=
+[[ -v SLUG ]] || SLUG=drydock
+[[ -v DOCKERFILE_PATH ]] || DOCKERFILE_PATH=Dockerfile
+[[ -v BRANCH ]] || BRANCH=$(git symbolic-ref -q --short HEAD | tr '/' '-')
+[[ "${BRANCH}" == "master" ]] && BRANCH=latest
+
+# If running on Docker Hub, extract the build arguments from context.
+if [[ -v DOCKER_REPO && $DOCKER_REPO =~ ([^/]+/[^/]+)/${SLUG}-([^-]+)-([^-]+)-([^-]+) ]]; then
+    [[ -n "${DOCKER_ORG}" ]] || DOCKER_ORG=${BASH_REMATCH[1]}
+    [[ -v PLATFORM ]] || PLATFORM=${BASH_REMATCH[2]}
+    [[ -v VARIANT ]] || VARIANT=${BASH_REMATCH[3]}
+    [[ -v COMPONENT ]] || COMPONENT=${BASH_REMATCH[4]}
+fi
+if [[ -v DOCKER_TAG && $DOCKER_TAG =~ ([\.0-9]+).* ]]; then
+    [[ -v VERSION ]] || VERSION=${BASH_REMATCH[1]}
+fi
+if [[ ! -v PLATFORM || ! -v VARIANT || ! -v COMPONENT || ! -v VERSION ]]; then
+    echo "Build information environment not complete, aborting."
+    echo "Provide either:"
+    echo "  \$DOCKER_ORG (org/slug-platform-variant-component) and \$DOCKER_TAG (x.y-branch)"
+    echo "or:"
+    echo "  \$PLATFORM, \$VARIANT, \$COMPONENT and \$VERSION"
+    echo "  (with optional \$DOCKER_ORG and \$BRANCH)"
+    exit 100
+fi
+echo "Preparing to build:"
+echo "  Docker organization: ${DOCKER_ORG}"
+echo "  Platform: ${PLATFORM}"
+echo "  Variant: ${VARIANT}"
+echo "  Component: ${COMPONENT}"
+echo "  Version: ${VERSION}"
+if [[ ! -f "${PLATFORM}/${VARIANT}/${COMPONENT}/${DOCKERFILE_PATH}" ]]; then
+    echo "Dockerfile not found, aborting"
+    exit 101
+fi
+
+# Deduce a sensible image name if none was provided.
+if [[ ! -v IMAGE_NAME ]]; then
+    IMAGE_NAME="${SLUG}-${PLATFORM}-${VARIANT}-${COMPONENT}:${VERSION}-${BRANCH}"
+    if [[ -n "${DOCKER_ORG}" ]]; then
+        IMAGE_NAME="${DOCKER_ORG}/${IMAGE_NAME}"
+    fi
+fi
+echo "  Image name: ${IMAGE_NAME}"
+
+cd "${PLATFORM}/${VARIANT}/${COMPONENT}"
+echo "Copying in platform library scripts"
+cp -Rv ../../lib .
+
+# Build the image
+docker build \
+    -f "${DOCKERFILE_PATH}" \
+    ${VERSION:+--build-arg "version=${VERSION}"} \
+    -t "${IMAGE_NAME}" .
