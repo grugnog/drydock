@@ -33,7 +33,7 @@ echo "  Platform: ${PLATFORM}"
 echo "  Variant: ${VARIANT}"
 echo "  Component: ${COMPONENT}"
 echo "  Version: ${VERSION}"
-if [[ ! -f "${PLATFORM}/${VARIANT}/${COMPONENT}/${DOCKERFILE_PATH}" ]]; then
+if [[ ! -f "${DOCKERFILE_PATH}" ]]; then
     echo "Dockerfile not found, aborting"
     exit 101
 fi
@@ -47,7 +47,6 @@ if [[ ! -v IMAGE_NAME ]]; then
 fi
 echo "  Image name: ${IMAGE_NAME}"
 
-cd "${PLATFORM}/${VARIANT}/${COMPONENT}"
 echo "Copying in platform library scripts"
 cp -Rv ../../lib .
 
