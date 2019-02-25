@@ -9,8 +9,6 @@ echo "Cleaning up any failed builds"
 docker-compose down --rmi local -v
 rm -rf docroot
 
-echo "Building containers"
-docker-compose build
 echo "Downloading Drupal core"
 docker run --volume "$(pwd)":/app --user "$(id -u):$(id -g)" drush/drush dl drupal -y --drupal-project-rename=docroot
 
@@ -32,7 +30,7 @@ echo "Page status OK"
 echo "Checking PHP version"
 ACTUAL=$(docker-compose run --rm php php --version | head -n 1 | cut -d " " -f 2 | cut -d'.' -f1-2)
 if [ "${ACTUAL}" != "${VERSION}" ]; then
-    echo "PHP does not match expected version number"
+    echo "PHP ${ACTUAL} does not match expected version number ${VERSION}"
     exit 2
 fi
 echo "PHP version OK"

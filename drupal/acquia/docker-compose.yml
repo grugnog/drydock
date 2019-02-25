@@ -2,22 +2,19 @@ version: "3"
 
 services:
   web:
-    build: httpd
+    image: "${PREFIX:-civicactions/drydock-}drupal-acquia-httpd:${TAG:-latest}"
     volumes:
       - .:/var/www
     depends_on:
       - php
   php:
-    build:
-      context: php
-      args:
-        version: "${VERSION}"
+    image: "${PREFIX:-civicactions/drydock-}drupal-acquia-php-${VERSION:-7.2}:${TAG:-latest}"
     volumes:
       - .:/var/www
     depends_on:
       - mysql
   mysql:
-    build: mysql
+    image: "${PREFIX:-civicactions/drydock-}drupal-acquia-mysql:${TAG:-latest}"
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=drupal
