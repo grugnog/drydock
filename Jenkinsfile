@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment { 
         PREFIX = 'civicactions/drydock-'
-        TAG = env.BRANCH_NAME
+        TAG = "${env.BRANCH_NAME}"
     }
     stages {
         stage('Code linting') {
