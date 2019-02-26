@@ -1,9 +1,15 @@
 pipeline {
     agent any
+    environment { 
+        PREFIX = 'civicactions/drydock-'
+        TAG = "${env.BRANCH_NAME}"
+    }
     stages {
         stage('Code linting') {
             steps {
                 script {
+                    // Output environment for debugging
+                    sh 'export'
                     // Check bash script formatting
                     sh 'find * -name *.sh -print0 | xargs -n1 -I "{}" -0 docker run -i -v "$(pwd)":/workdir -w /workdir -e PHP_CS_FIXER_IGNORE_ENV=1 unibeautify/beautysh --files "/workdir/{}"'
                     // Can't check exit code, so just test if files changed on disk
@@ -17,9 +23,16 @@ pipeline {
                 }
             }
         }
-        stage('Run parallel builds and tests') {
+        stage('Run builds') {
+            steps {
+                script {
+                    sh 'habitus'
+                }
+            }
+        }
+        stage('Functional tests') {
             parallel {
-                stage('Build and test Acquia PHP 7.1 image') {
+                stage('Test Acquia PHP 7.1 image') {
                     steps {
                         script {
                             dir('drupal/acquia') { 
@@ -30,7 +43,7 @@ pipeline {
                         }
                     }
                 }
-                stage('Build and test Acquia PHP 7.2 image') {
+                stage('Test Acquia PHP 7.2 image') {
                     steps {
                         script {
                             dir('drupal/acquia') { 
@@ -41,7 +54,7 @@ pipeline {
                         }
                     }
                 }
-                stage('Build and test Pantheon PHP 7.1 image') {
+                stage('Test Pantheon PHP 7.1 image') {
                     steps {
                         script {
                             dir('drupal/pantheon') { 
@@ -52,7 +65,7 @@ pipeline {
                         }
                     }
                 }
-                stage('Build and test Pantheon PHP 7.2 image') {
+                stage('Test Pantheon PHP 7.2 image') {
                     steps {
                         script {
                             dir('drupal/pantheon') { 
