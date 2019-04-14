@@ -1,8 +1,8 @@
 build:
   version: 2016-03-14 # version of the build schema.
   steps:
-    ## Platform: Drupal
-    # Variant: Acquia
+    # Platform: Drupal
+    Variant: Acquia
     drupal-acquia-httpd:
       name: _env(PREFIX)drupal-acquia-httpd:_env(TAG)
       context: drupal/acquia/httpd
@@ -49,11 +49,33 @@ build:
         version: 7.2
       depends_on:
         - drupal-pantheon-php-7.1
+    ## Platform: Baseline7
+    # Variant: CentOS DISA STIG
+    baseline7-centos-disa:
+      name: _env(PREFIX)baseline7-centos-disa:_env(TAG)
+      context: baselines/baseline7
+      dockerfile: Dockerfile
+      args:
+        SOURCE: centos:7
+        SCAP_TARGET: stig-rhel7-disa
+    # Variant: CentOS USGCB STIG
+    baseline7-centos-usgcb:
+      name: _env(PREFIX)baseline7-centos-usgcb:_env(TAG)
+      context: baselines/baseline7
+      dockerfile: Dockerfile
+      args:
+        SOURCE: centos:7
+        SCAP_TARGET: ospp
+      depends_on:
+        # Ensure serial build
+        - baseline7-centos-disa
     ## Platform: Security
-    # Variant: OpenSCAP (CentOS)
-    security-openscap-centos:
-      name: _env(PREFIX)security-openscap7-centos7:_env(TAG)
+    # Variant: OpenSCAP CentOS 7
+    security-openscap7-centos:
+      name: _env(PREFIX)security-openscap7-centos:_env(TAG)
       context: security/openscap7
       dockerfile: Dockerfile
       args:
-        source: centos:7
+        SOURCE: _env(PREFIX)baseline7-centos-disa:_env(TAG)
+      depends_on:
+        - baseline7-centos-disa

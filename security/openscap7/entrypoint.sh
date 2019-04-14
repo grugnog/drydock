@@ -1,19 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ "$#" -lt 3 || "${1:-}" != "auto" && "${1:-}" != "manual" ]]; then
+PROFILE_NAMESPACE=org.ssgproject.content_profile
+PROFILE_PREFIX="xccdf_${PROFILE_NAMESPACE}"
+
+if [[ "$#" -lt 2 || "${1:-}" != "auto" && "${1:-}" != "manual" ]]; then
     echo "Run OpenSCAP on Docker RHEL 7 and CentOS 7 images"
     echo
     echo "There are 2 ways to use this tool:"
-    echo "Automatic: Provide exactly 3 arguments: auto [imagename:tag] [profileId]."
-    echo "  e.g. 'auto centos:7 xccdf_org.ssgproject.content_profile_stig-rhel7-disa'"
-    echo "  The second argument is the image name/tag to evaluate. The final argument is"
-    echo "  the SSG profile Id to use (run 'manual info' against the SSG xml to list profiles)."
+    echo "Automatic: Provide exactly 2 arguments: auto [imagename:tag]."
+    echo "  e.g. 'auto centos:7'"
+    echo "  The second argument is the image name/tag to evaluate."
     echo "  This will cause both XCCDF SSG profile and CVE evaluations to be completed."
+    echo
+    echo "  The SSG profile Id to use will be determined from the ${PROFILE_NAMESPACE} label"
+    echo "  of the image being scanned."
+    echo
+    echo "  If a tailoring file matching the name template: ssg-OS-PROFILE-tailoring.xml"
+    echo "  exists in the image being scanned, then it will be used to tailor the scan."
+    echo
     echo "  Reports will be saved to the /workspace directory, mount a directory to that location"
-    echo "  if you wish to retain them. If /workspace/tailoring-ssg.xml (or tailoring-cve.xml)"
-    echo "  exists then it will be used to tailor that evaluation."
-    echo "  Exit code will be 1 if there are fails in either evaluation and 0 if none."
+    echo "  if you wish to retain them."
+    echo
+    echo "  Exit code will be 1 if there are fails in either SSG or CVE evaluation and 0 if none."
     echo
     echo "Manual: Provide a 'manual' argument, an image name to evaluate, then oscap parameters:"
     echo "  e.g. 'manual centos:7 oval eval /usr/share/xml/scap/ssg/content/ssg-rhel7-oval.xml'"
@@ -42,10 +51,6 @@ autoeval() {
 
     local xml="/workspace/${type}-results-arf.xml"
     local report="--results-arf ${xml} --report /workspace/${type}-report.html"
-    local tailoring=
-    if [ -r "/workspace/${type}-tailoring.xml" ]; then
-        local tailoring="--tailoring-file /workspace/${type}-tailoring.xml"
-    fi
     # Count any selected, applicable, checked, non-pass XCCDF results as fails:
     local fails='count(/arf:asset-report-collection/arf:reports/arf:report[@id="xccdf1"]/arf:content/cdf12:TestResult/cdf12:rule-result[not(cdf12:result="notselected") and not(cdf12:result="notapplicable") and not(cdf12:result="notchecked") and not(cdf12:result="pass")])'
     local ns=cdf12="http://checklists.nist.gov/xccdf/1.2"
@@ -55,7 +60,7 @@ autoeval() {
     # and disable exit on error, since we check each exit code explicitly.
     set -x +e
     # shellcheck disable=SC2086
-    oscap-chroot /mnt xccdf eval ${report} ${tailoring} "${args[@]}"
+    oscap-chroot /mnt xccdf eval ${report} "${args[@]}"
     local scan_exit=$?
     # shellcheck disable=SC2086
     count=$(xmlstarlet sel -N ${ns} -t -v "${fails}" ${xml})
@@ -79,11 +84,13 @@ autoeval() {
     return 0
 }
 
+MODE="$1"
+IMAGE="$2"
 cd /tmp
 echo "Unpacking the image"
-docker-companion unpack "$2" /mnt
+docker-companion unpack "${IMAGE}" /mnt
 
-if [ "$1" == "auto" ]; then
+if [ "${MODE}" == "auto" ]; then
     echo "Running automatic evaluations"
     if [ ! -d "/workspace" ]; then
         mkdir /workspace
@@ -94,7 +101,20 @@ if [ "$1" == "auto" ]; then
     if [ -f "/mnt/etc/centos-release" ]; then
         OS=centos7
     fi
-    ARGS=('ssg' '--fetch-remote-resources' '--profile' "$3" "/usr/share/xml/scap/ssg/content/ssg-${OS}-ds.xml")
+    PROFILE=$(docker inspect --format "{{ index .Config.Labels \"${PROFILE_NAMESPACE}\"}}" "${IMAGE}")
+    if [[ "${PROFILE}" == "" ]]; then
+        echo "Image does not contain an \"${PROFILE_NAMESPACE}\" label indicating the profile to use."
+        exit 10
+    fi
+    TAILORING=
+    TAILORING_FILE="/mnt/var/lib/scap/ssg/content/ssg-${OS}-${PROFILE}-tailoring.xml"
+    echo "Looking for image tailoring file ${TAILORING_FILE}"
+    if [ -r "${TAILORING_FILE}" ]; then
+        echo "Using image tailoring file ${TAILORING_FILE}"
+        TAILORING="--tailoring-file ${TAILORING_FILE}"
+    fi
+    # shellcheck disable=SC2206
+    ARGS=('ssg' '--fetch-remote-resources' '--profile' "${PROFILE_PREFIX}_${PROFILE}" ${TAILORING} "/usr/share/xml/scap/ssg/content/ssg-${OS}-ds.xml")
     SSG=1
     if autoeval "${ARGS[@]}"; then
         SSG=0

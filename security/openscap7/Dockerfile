@@ -1,9 +1,9 @@
-ARG source=registry.access.redhat.com/rhel7
+ARG SOURCE=registry.access.redhat.com/rhel7
 # hadolint ignore=DL3006
-FROM $source
+FROM $SOURCE
 
 RUN yum install -y epel-release \
-  && yum install -y openscap-utils scap-security-guide xmlstarlet \
+  && yum install -y openscap-utils scap-security-guide xmlstarlet docker \
   && yum clean all \
   && rm -rf /var/cache/yum
 

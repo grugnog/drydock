@@ -11,7 +11,7 @@ pipeline {
                     // Output environment for debugging
                     sh 'export'
                     // Check bash script formatting
-                    sh 'find * -name *.sh -print0 | xargs -n1 -I "{}" -0 docker run -i -v "$(pwd)":/workdir -w /workdir -e PHP_CS_FIXER_IGNORE_ENV=1 unibeautify/beautysh --files "/workdir/{}"'
+                    sh 'find * -name *.sh -print0 | xargs -n1 -I "{}" -0 docker run -i -v "$(pwd)":/workdir -w /workdir unibeautify/beautysh --files "/workdir/{}"'
                     // Can't check exit code, so just test if files changed on disk
                     sh 'if ! git diff-index --quiet HEAD --; then echo "Bash not matching beautysh style"; exit 1; fi'
                     // Lint bash scripts using shellcheck
@@ -71,6 +71,15 @@ pipeline {
                             sh '../test/test.sh'
                         }
                     }
+                }
+            }
+        }
+        stage('OpenSCAP Scans') {
+            steps {
+                script {
+                    // TODO: Identify the images to scan by filtering Docker images by label.
+                    sh 'docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock "${PREFIX}security-openscap7-centos:${TAG}" auto "${PREFIX}baseline7-centos-disa:${TAG}"'
+                    sh 'docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock "${PREFIX}security-openscap7-centos:${TAG}" auto "${PREFIX}baseline7-centos-usgcb:${TAG}"'
                 }
             }
         }
