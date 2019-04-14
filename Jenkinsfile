@@ -78,8 +78,8 @@ pipeline {
             steps {
                 script {
                     // TODO: Identify the images to scan by filtering Docker images by label.
-                    sh 'docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock "${PREFIX}security-openscap7-centos:${TAG}" auto "${PREFIX}baseline7-centos-disa:${TAG}"'
-                    sh 'docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock "${PREFIX}security-openscap7-centos:${TAG}" auto "${PREFIX}baseline7-centos-usgcb:${TAG}"'
+                    sh 'docker run --rm -i -v /var/run/docker.sock:/var/run/docker.sock "${PREFIX}security-openscap7-centos:${TAG}" auto "${PREFIX}baseline7-centos-disa:${TAG}"'
+                    sh 'docker run --rm -i -v /var/run/docker.sock:/var/run/docker.sock "${PREFIX}security-openscap7-centos:${TAG}" auto "${PREFIX}baseline7-centos-usgcb:${TAG}"'
                 }
             }
         }
