@@ -8,6 +8,7 @@ build:
       context: baselines/baseline7
       dockerfile: Dockerfile
       args:
+        SOURCE: registry.access.redhat.com/rhel7
         SCAP_TARGET: stig-rhel7-disa
     # Variant: CentOS USGCB STIG
     baseline7-centos-usgcb:
@@ -15,6 +16,7 @@ build:
       context: baselines/baseline7
       dockerfile: Dockerfile
       args:
+        SOURCE: registry.access.redhat.com/rhel7
         SCAP_TARGET: ospp
       depends_on:
         # Ensure serial build
