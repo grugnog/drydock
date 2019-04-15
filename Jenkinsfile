@@ -37,7 +37,8 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'habitus -keep-all -f build-rhel.yml'
+                    sh 'curl -L --progress-bar -o /home/jenkins/habitus https://github.com/cloud66-oss/habitus/releases/download/1.0.3/habitus_linux_amd64 && chmod a+x /home/jenkins/habitus'
+                    sh '/home/jenkins/habitus -keep-all -f build-rhel.yml'
                 }
             }
         }
