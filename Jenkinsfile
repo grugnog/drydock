@@ -26,7 +26,18 @@ pipeline {
         stage('Run builds') {
             steps {
                 script {
-                    sh 'habitus -keep-all'
+                    sh 'habitus -keep-all -f build-core.yml'
+                    sh 'habitus -keep-all -f build-saas.yml'
+                }
+            }
+        }
+        stage('Run RHEL 7 builds') {
+            agent { 
+                label 'rhel-7'
+            }
+            steps {
+                script {
+                    sh 'habitus -keep-all -f build-rhel.yml'
                 }
             }
         }

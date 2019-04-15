@@ -1,0 +1,31 @@
+build:
+  version: 2016-03-14 # version of the build schema.
+  steps:
+    ## Platform: Baseline7
+    # Variant: RHEL DISA STIG
+    baseline7-rhel-disa:
+      name: _env(PREFIX)baseline7-rhel-disa:_env(TAG)
+      context: baselines/baseline7
+      dockerfile: Dockerfile
+      args:
+        SCAP_TARGET: stig-rhel7-disa
+    # Variant: CentOS USGCB STIG
+    baseline7-centos-usgcb:
+      name: _env(PREFIX)baseline7-rhel-usgcb:_env(TAG)
+      context: baselines/baseline7
+      dockerfile: Dockerfile
+      args:
+        SCAP_TARGET: ospp
+      depends_on:
+        # Ensure serial build
+        - baseline7-rhel-disa
+    ## Platform: Security
+    # Variant: OpenSCAP RHEL 7
+    security-openscap7-rhel:
+      name: _env(PREFIX)security-openscap7-rhel:_env(TAG)
+      context: security/openscap7
+      dockerfile: Dockerfile
+      args:
+        SOURCE: _env(PREFIX)baseline7-rhel-disa:_env(TAG)
+      depends_on:
+        - baseline7-rhel-disa
