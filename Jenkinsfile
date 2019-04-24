@@ -33,7 +33,7 @@ pipeline {
         }
         stage('Run RHEL 7 builds') {
             agent { 
-                label 'rhel-7'
+                label 'rhel-7-latest-docker'
             }
             steps {
                 script {
