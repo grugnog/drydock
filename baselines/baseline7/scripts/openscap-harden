@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Install and run OpenSCAP in hardening mode, then clean up.
+OPENSCAP_PACKAGES="openscap-utils scap-security-guide"
+build-yum install -y ${OPENSCAP_PACKAGES}
+[ -f "/etc/centos-release" ] && OS=centos7 || OS=rhel7
+oscap xccdf eval --remediate --fetch-remote-resources --profile "xccdf_org.ssgproject.content_profile_${SCAP_TARGET}" "/usr/share/xml/scap/ssg/content/ssg-${OS}-ds.xml" || true
+build-yum remove -y ${OPENSCAP_PACKAGES}
+build-yum clean all

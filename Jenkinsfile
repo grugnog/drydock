@@ -38,7 +38,8 @@ pipeline {
             steps {
                 script {
                     sh 'curl -L --progress-bar -o /home/jenkins/habitus https://github.com/cloud66-oss/habitus/releases/download/1.0.3/habitus_linux_amd64 && chmod a+x /home/jenkins/habitus'
-                    sh '/home/jenkins/habitus -keep-all -f build-rhel.yml'
+                    sh 'sudo tar czf subscriptions.tar.gz /etc/yum.repos.d/rh-cloud.repo /etc/pki/rhui/'
+                    sh '/home/jenkins/habitus -keep-all --binding=172.17.0.1 --secrets=true -f build-rhel.yml'
                 }
             }
         }

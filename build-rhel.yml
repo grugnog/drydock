@@ -10,6 +10,10 @@ build:
       args:
         SOURCE: registry.access.redhat.com/rhel7:latest
         SCAP_TARGET: stig-rhel7-disa
+      secrets:
+        subscriptions:
+          type: file
+          value: subscriptions.tar.gz
     # Variant: CentOS USGCB STIG
     baseline7-centos-usgcb:
       name: _env(PREFIX)baseline7-rhel-usgcb:_env(TAG)
@@ -18,6 +22,10 @@ build:
       args:
         SOURCE: registry.access.redhat.com/rhel7:latest
         SCAP_TARGET: ospp
+      secrets:
+        subscriptions:
+          type: file
+          value: subscriptions.tar.gz
       depends_on:
         # Ensure serial build
         - baseline7-rhel-disa
@@ -29,5 +37,9 @@ build:
       dockerfile: Dockerfile
       args:
         SOURCE: _env(PREFIX)baseline7-rhel-disa:_env(TAG)
+      secrets:
+        subscriptions:
+          type: file
+          value: subscriptions.tar.gz
       depends_on:
         - baseline7-rhel-disa
