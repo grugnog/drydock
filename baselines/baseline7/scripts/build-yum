@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # If we are on CentOS, just run yum as normal.
-if [ -f "/mnt/etc/centos-release" ]; then
+if [ -f "/etc/centos-release" ]; then
     exec yum $@
 fi
 
