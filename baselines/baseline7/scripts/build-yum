@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# If we are on CentOS, just run yum as normal.
+if [ -f "/mnt/etc/centos-release" ]; then
+    exec yum $@
+fi
+
+echo "Downloading and installing RHEL subscription certificate from host, via Habitus."
+SUBSCRIPTIONS="$(curl -s http://172.17.0.1:8080/v1/secrets/file/subscriptions | tar xvz -C /)"
+
+echo "Run the yum command, disabling subscription-manager, since this is not used on cloud subscriptions."
+yum --disableplugin=subscription-manager $@
+
+echo "Clean up subscription files."
+rm -rf ${SUBSCRIPTIONS}
+
+echo "Assert that all subscription files have really been cleaned up."
+[ "$(ls -1 ${SUBSCRIPTIONS} 2>&1 | grep -vF 'No such file or directory')" == "" ]

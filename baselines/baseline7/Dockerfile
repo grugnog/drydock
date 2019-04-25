@@ -8,11 +8,11 @@ ARG TAILORING_SUFFIX=_baseline
 LABEL org.ssgproject.content_profile=${SCAP_TARGET}${TAILORING_SUFFIX}
 COPY ssg-*.xml /var/lib/scap/ssg/content/
 
-# Complete an initial SSG automatic remediation
-ENV PACKAGES openscap-utils scap-security-guide
-RUN yum install -y ${PACKAGES} \
-  && [ -f "/etc/centos-release" ] && OS=centos7 || OS=rhel7 \
-  && oscap xccdf eval --remediate --fetch-remote-resources --profile "xccdf_org.ssgproject.content_profile_${SCAP_TARGET}" "/usr/share/xml/scap/ssg/content/ssg-${OS}-ds.xml" || true \
-  && yum remove -y ${PACKAGES} \
-  && yum clean all \
-  && rm -rf /var/cache/yum
+# Copy in helper scripts, to enable RHEL license (without storing licence to build)
+# and run an initial OpenSCAP automatic remediation.
+COPY scripts /usr/local/drydock
+ENV PATH "${PATH}:/usr/local/drydock"
+
+RUN chmod u+x /usr/local/drydock/* \
+  # Complete an initial SSG automatic remediation
+  && openscap-harden
