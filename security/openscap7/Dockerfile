@@ -2,9 +2,9 @@ ARG SOURCE=registry.access.redhat.com/rhel7
 # hadolint ignore=DL3006
 FROM $SOURCE
 
-RUN yum install -y epel-release \
-  && yum install -y openscap-utils scap-security-guide xmlstarlet docker \
-  && yum clean all \
+RUN build-yum install -y epel-release \
+  && build-yum install -y openscap-utils scap-security-guide xmlstarlet docker \
+  && build-yum clean all \
   && rm -rf /var/cache/yum
 
 # We use bash pipes to simplify checking download hashes.
