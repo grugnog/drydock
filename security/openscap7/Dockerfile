@@ -2,7 +2,7 @@ ARG SOURCE=registry.access.redhat.com/rhel7
 # hadolint ignore=DL3006
 FROM $SOURCE
 
-RUN build-yum install -y epel-release \
+RUN build-yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
   && build-yum install -y openscap-utils scap-security-guide xmlstarlet docker \
   && build-yum clean all \
   && rm -rf /var/cache/yum
