@@ -27,7 +27,6 @@ pipeline {
             steps {
                 script {
                     sh 'habitus -keep-all -f build-core.yml'
-                    sh 'habitus -keep-all -f build-saas.yml'
                 }
             }
         }
@@ -39,50 +38,6 @@ pipeline {
                 script {
                     sh 'sudo tar czf subscriptions.tar.gz /etc/yum.repos.d/rh-cloud.repo /etc/pki/rhui/'
                     sh 'habitus -keep-all --binding=172.17.0.1 --secrets=true -f build-rhel.yml'
-                }
-            }
-        }
-        stage('Test Acquia PHP 7.1 image') {
-            steps {
-                script {
-                    dir('drupal/acquia') { 
-                        withEnv(['VERSION=7.1']) {
-                            sh '../test/test.sh'
-                        }
-                    }
-                }
-            }
-        }
-        stage('Test Acquia PHP 7.2 image') {
-            steps {
-                script {
-                    dir('drupal/acquia') { 
-                        withEnv(['VERSION=7.2']) {
-                            sh '../test/test.sh'
-                        }
-                    }
-                }
-            }
-        }
-        stage('Test Pantheon PHP 7.1 image') {
-            steps {
-                script {
-                    dir('drupal/pantheon') { 
-                        withEnv(['VERSION=7.1']) {
-                            sh '../test/test.sh'
-                        }
-                    }
-                }
-            }
-        }
-        stage('Test Pantheon PHP 7.2 image') {
-            steps {
-                script {
-                    dir('drupal/pantheon') { 
-                        withEnv(['VERSION=7.2']) {
-                            sh '../test/test.sh'
-                        }
-                    }
                 }
             }
         }
