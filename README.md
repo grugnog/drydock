@@ -45,16 +45,16 @@ Library of Docker application templates following a common pattern.
   * Images should set the entrypoint to execute the test tool command (typically via a script wrapper), unless the tool comprises multiple top level commands
   * The test tool command(s) should have labels to expose them to sandbox environments
   * When provided with the docker command `autotest` the standard test suite should be run (encapsulating any parameters that should be set for CI usage)
-* Test configuration/scripts must be copied or mounted at /src
+* Test configuration/scripts must be copied or mounted at `/src`
 * Functional web tests must support a configurable `TARGET` environment variable that specifies the base URL to test with no trailing slash (including proto and path prefix - e.g. `https://web/app/base`). Entrypoints may parse the hostname etc out if needed.
   * The default value of this environment variable should be `http://web`.
-  * Web testing tools that check pages (e.g. secuity or accessibility scanners) can optionally use a newline delimited list of paths to test (e.g. `section/subsection/page`) that can be mounted at `/src/pages.txt`.
-* Source code analyzers must scan code copied or mounted at /target
+  * Web testing tools that check pages (e.g. security or accessibility scanners) can optionally use a newline delimited list of paths to test (e.g. `section/subsection/page`). If used, this file must be mounted at `/src/pages.txt`. If not used the scanner may default to just scanning the front page, or a spidering mode.
+* Source code analyzers must scan code copied or mounted at `/target`
 * Any results (test report, screenshots, coverage etc) should be output to the /results directory
   * Unit tests and language linters are run in the same image as the application code they are testing, so don't need to support /target, but should support output to /results
 * The tool must either use an official vendor provided Docker image base, or be based on a hardened image
-* The /src and /target directories must be mounted read only
+* The `/src` and `/target` directories must be mounted read only
 * An example `docker-compose.<toolname>.yml` should be provided that demonstrates usage
 * Base image testing:
-  * The images should include an initial configuration copied to the /src directory (and a stub file in /target if required) that completes a basic smoke test
+  * The images should include an initial configuration copied to the `/src` directory (and a stub file in `/target` if required) that completes a basic smoke test
   * A sample web page will be provided at http://web for base image testing
